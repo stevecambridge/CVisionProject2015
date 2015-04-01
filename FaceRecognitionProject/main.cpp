@@ -98,7 +98,7 @@ void Part1 (vector<Mat> &Images) {
     //waitKey(0);
 
     Mat extractedDescriptors1;
-    vector<vector<double>> extractedDescriptorsInBox;
+    vector< vector<double> > extractedDescriptorsInBox;
     //stores the SIFT descriptors for the first and second image
     FeatureDescriptor->compute(image1,keyPointsInBox,extractedDescriptors1);
     int y;
@@ -111,14 +111,15 @@ void Part1 (vector<Mat> &Images) {
                    3, KMEANS_PP_CENTERS, centers);
     cout << "hello";
     double newNorm;
-    double norm = 1000;
-    int histogram[extractedDescriptors1.rows];
+    double norm = 10000;
+    int histogram[50];
     int t;
-    for (t=0; t < extractedDescriptors1.rows; t++){
-        histogram[t]=0;
-    }
     vector<int> histo;
 
+    for (t=0; t < 50; t++){
+        histogram[t]=0;
+        cout << histogram[t] << "\n";
+    }
     int center;
     vector<vector<double>> centerOfDescriptors;
     int x;
@@ -135,16 +136,16 @@ void Part1 (vector<Mat> &Images) {
         //Pushes back the center to which the descriptor is matched. The centers
         //are in the same order as the descriptors
         centerOfDescriptors.push_back(centers.row(center));
-        //histogram[center] = histogram[center] + 1;
-        vector<int>::iterator iterator = histo.begin();
-        histo.insert(iterator +1, 2,2);
-        norm = 1000;
+        histogram[center] = histogram[center] + 1;
+        //vector<int>::iterator iterator = histo.begin();
+        //histo.insert(iterato);
+        norm = 10000;
         center = 0;
     }
-   /* int p;
-    for (p = 0; p < sizeof(histogram); p++){
-    cout << histogram[p] + "\n";
-    } */
+    int p;
+    for (p = 0; p < 50; p++){
+    cout << histogram[p] << "\n";
+    }
     cout << "hello";
 
 }
