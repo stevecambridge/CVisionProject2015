@@ -8,32 +8,38 @@ using namespace std;
 void Part1(vector<Mat> &Images);
 void Part2(vector<Mat> &Images);
 Mat RANSACDLT(vector<Point2d> keypoints1, vector<Point2d> keypoints2);
+
 int main()
 {
-// Initialize OpenCV nonfree module
-initModule_nonfree();
-// Set the dir/name of each image for Part1 here
-const int NUM_IMAGES_PART1 = 1;
-const string IMG_NAMES_PART1[] = {"/home/thuy-anh/FaceRecognitionProject/TA1.jpg"};
-// Set the dir/name of each image for Part1 here
-const int NUM_IMAGES_PART2 = 2;
-const string IMG_NAMES_PART2[] = {"/home/thuy-anh/Assignment3CompVision/plan1.jpg", "/home/thuy-anh/Assignment3CompVision/plan2.jpg"};
-// Load Part1 images
-vector<Mat> Images_part1;
-for(int i = 0; i < NUM_IMAGES_PART1; i++)
-{
-Images_part1.push_back( imread( IMG_NAMES_PART1[i] ) );
-}
-// Load Part2 images
-vector<Mat> Images_part2;
-for(int i = 0; i < NUM_IMAGES_PART2; i++)
-{
-Images_part2.push_back( imread( IMG_NAMES_PART2[i] ) );
-}
-// Call Part1 function
-Part1(Images_part1);
-// Call Part2 function
-return 0;
+    // Initialize OpenCV nonfree module
+    initModule_nonfree();
+
+    // Set the dir/name of each image for Part1 here
+    const int NUM_IMAGES_PART1 = 1;
+    const string IMG_NAMES_PART1[] = {"/home/thuy-anh/FaceRecognitionProject/TA1.jpg"};
+
+    // Set the dir/name of each image for Part1 here
+    const int NUM_IMAGES_PART2 = 2;
+    const string IMG_NAMES_PART2[] = {"/home/thuy-anh/Assignment3CompVision/plan1.jpg", "/home/thuy-anh/Assignment3CompVision/plan2.jpg"};
+
+    // Load Part1 images
+    vector<Mat> Images_part1;
+    for(int i = 0; i < NUM_IMAGES_PART1; i++)
+    {
+        Images_part1.push_back( imread( IMG_NAMES_PART1[i] ) );
+    }
+
+    // Load Part2 images
+    vector<Mat> Images_part2;
+    for(int i = 0; i < NUM_IMAGES_PART2; i++)
+    {
+        Images_part2.push_back( imread( IMG_NAMES_PART2[i] ) );
+    }
+
+    // Call Part1 function
+    Part1(Images_part1);
+    // Call Part2 function
+    return 0;
 }
 
 bool in_box(Point2d in, Point2d box1, Point2d box2)
@@ -54,6 +60,7 @@ bool in_box(Point2d in, Point2d box1, Point2d box2)
     }
     return true;
 }
+
 void Part1 (vector<Mat> &Images) {
     Mat image1 = Images[0];
     Ptr<FeatureDetector> FeatureDetectorSIFT = FeatureDetector::create("SIFT");
