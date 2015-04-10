@@ -8,6 +8,8 @@ using namespace std;
 void Part1(vector<Mat> &Images);
 void Part2(vector<Mat> &Images);
 Mat RANSACDLT(vector<Point2d> keypoints1, vector<Point2d> keypoints2);
+vector<int> lbp_histogram(Mat img_window);
+int lbp_val(Mat img, int i, int j);
 
 int main()
 {
@@ -72,7 +74,7 @@ void Part1 (vector<Mat> &Images) {
 
     Ptr<DescriptorExtractor> FeatureDescriptor = DescriptorExtractor::create("SIFT");
 
-    vector<vector<Point2d>> boundingBoxes;
+    vector< vector<Point2d> > boundingBoxes;
     Point2d point1;
     Point2d point2;
     point1.x = 119;
@@ -128,7 +130,7 @@ void Part1 (vector<Mat> &Images) {
         cout << histogram[t] << "\n";
     }
     int center;
-    vector<vector<double>> centerOfDescriptors;
+    vector< vector<double> > centerOfDescriptors;
     int x;
     for(x = 0; x < extractedDescriptors1.rows; x++){
         for (i = 0; i < centers.rows; i++){
@@ -154,7 +156,64 @@ void Part1 (vector<Mat> &Images) {
     cout << histogram[p] << "\n";
     }
     cout << "hello";
+}
 
+//pass the part of the picture within the bounding box
+//W and H are the numbers of rows and columns of windows
+void lbp_extract(Mat face, int W, int H)
+{
+    Mat window;
+    int row_height = window.rows / (double)W;
+    int col_width = window.cols / (double)H;
+    vector<int> histogram;
+
+    //loop over image and perform lbp junk on each window of face
+    for(int i=0; i<W; i++)
+    {
+        for(int j=0; j<H; j++)
+        {
+            window = Mat(face, Rect(j*col_width, i*row_height, col_width, row_height));
+            histogram = lbp_histogram(window);
+
+            //NOT SURE WHAT TO DO WITH THIS BUT HERE IT IS
+        }
+    }
+}
+
+//returns the histogram of lbp descriptors, given one of the W x H windows of the image
+vector<int> lbp_histogram(Mat img_window)
+{
+    //initialize histogram
+    vector<int> hist;
+    for(int i=0; i<256; i++)
+        hist.push_back(0);
+
+    cvtColor(img_window, img_window, CV_RGB2GRAY);
+    for(int i=0; i<img_window.rows; i++)
+    {
+        for(int j=0; j<img_window.cols; j++)
+        {
+            //ignoring border pixels cos lbp would get weird
+            if(i!=0 && j!=0 && i!=img_window.rows-1 && j!= img_window.cols-1)
+                hist[lbp_val(img_window, i, j)] += 1;
+        }
+    }
+    return hist;
+}
+
+//helper for lbp_histogram
+int lbp_val(Mat img, int i, int j)
+{
+    int center = img.at<double>(i,j);
+    int out = 0;
+    out += (img.at<double>(i-1, j) < center);
+    out += (img.at<double>(i-1, j+1) < center)*2;
+    out += (img.at<double>(i, j+1) < center)*4;
+    out += (img.at<double>(i+1, j+1) < center)*8;
+    out += (img.at<double>(i+1, j) < center)*16;
+    out += (img.at<double>(i+1, j-1) < center)*32;
+    out += (img.at<double>(i, j-1) < center)*64;
+    out += (img.at<double>(i-1, j-1) < center)*128;
 }
 
 
