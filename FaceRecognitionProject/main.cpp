@@ -10,6 +10,7 @@ void Part2(vector<Mat> &Images);
 Mat RANSACDLT(vector<Point2d> keypoints1, vector<Point2d> keypoints2);
 vector<int> lbp_histogram(Mat img_window);
 int lbp_val(Mat img, int i, int j);
+void lbp_extract(Mat face, int W, int H);
 
 typedef struct Face_Bounding 
 {
@@ -87,7 +88,7 @@ void Part1 (vector<Mat> &Images) {
     //Stores the keypoints for the first and second image
     FeatureDetectorSIFT->detect(image1, keyPoints1);
 
-
+    //vector of face images with bounding boxes
 
     Ptr<DescriptorExtractor> FeatureDescriptor = DescriptorExtractor::create("SIFT");
 
