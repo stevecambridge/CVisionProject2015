@@ -6,7 +6,13 @@
 using namespace cv;
 using namespace std;
 // Functions prototypes
-void Part1(vector<Mat> &Images);
+struct Face_Bounding
+{
+    Point2d top_left;
+    Point2d bottom_right;
+    Mat image;
+};
+void Part1(vector<Face_Bounding> &faces);
 void Part2(vector<Mat> &Images);
 Mat RANSACDLT(vector<Point2d> keypoints1, vector<Point2d> keypoints2);
 vector<int> lbp_histogram(Mat img_window);
@@ -14,21 +20,6 @@ int lbp_val(Mat img, int i, int j);
 bool YaleDatasetLoader(vector<Mat> &dataset, const string baseAddress, const string fileList);
 void lbp_extract(Mat face, int W, int H);
 
-typedef struct Face_Bounding 
-{
-    Point2d top_left;
-    Point2d bottom_right;
-    Mat image;
-} Face_Bounding;
-
-Face_Bounding *new_face_bounding(Mat im, Point2d top_left, Point2d bottom_right)
-{
-    Face_Bounding *out = (Face_Bounding *)(malloc(sizeof(Face_Bounding)));
-    out->top_left = top_left;
-    out->bottom_right = bottom_right;
-    out->image = im;
-    return out;
-}
 
 
 int main()
@@ -39,20 +30,49 @@ int main()
     /* Load the training images */
     vector<Mat> pictures;
     // put the full address of the Training Images.txt here
-    const string trainingfilelist = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damien.txt";
+    const string trainingfilelistDamien = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damien.txt";
     // put the full address of the Training Images folder here
-    const string trainingBaseAddress = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/close";
+    const string trainingBaseAddressDamien = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damien";
     // Load the training dataset
-    YaleDatasetLoader(pictures, trainingBaseAddress, trainingfilelist);
+    YaleDatasetLoader(pictures, trainingBaseAddressDamien, trainingfilelistDamien);
 
-    // Set the dir/name of each image for Part1 here
-    const int NUM_IMAGES_PART1 = 1;
-    //const string IMG_NAMES_PART1[] = {"/home/thuy-anh/FaceRecognitionProject/TA1.jpg",""};
+    vector<Face_Bounding> images;
+    //new_face_bounding(pictures[0],Point2d(117,108),Point2d(441,572));
+    Face_Bounding face = {Point2d(117,108),Point2d(441,572),pictures[0]};
+    images.push_back(face);
+    face = {Point2d(61,122),Point2d(416,609),pictures[1]};
+    images.push_back(face);
+    face = {Point2d(53,78),Point2d(438,602),pictures[1]};
+    images.push_back(face);
+    face = {Point2d(65,110),Point2d(507,627),pictures[1]};
+    images.push_back(face);
+    face = {Point2d(71,92),Point2d(511,619),pictures[1]};
+    images.push_back(face);
+    face = {Point2d(189,208),Point2d(399,436),pictures[1]};
+    images.push_back(face);
+    face = {Point2d(192,231),Point2d(395,469),pictures[1]};
+    images.push_back(face);
+    face = {Point2d(154,234),Point2d(380,488),pictures[1]};
+    images.push_back(face);
+    face = {Point2d(176,216),Point2d(420,474),pictures[1]};
+    images.push_back(face);
+    face = {Point2d(142,195),Point2d(441,463),pictures[1]};
+    images.push_back(face);
+    face = {Point2d(236,231),Point2d(367,361),pictures[1]};
+    images.push_back(face);
+    face = {Point2d(217,233),Point2d(381,387),pictures[1]};
+    images.push_back(face);
+    face = {Point2d(189,244),Point2d(376,408),pictures[1]};
+    images.push_back(face);
+    face = {Point2d(218,257),Point2d(395,413),pictures[1]};
+    images.push_back(face);
+    face = {Point2d(215,247),Point2d(394,413),pictures[1]};
+    images.push_back(face);
+    //imshow("hello",images[1].image);
+    //waitKey(0);
 
-    // Set the dir/name of each image for Part1 here
-    const int NUM_IMAGES_PART2 = 2;
-    //const string IMG_NAMES_PART2[] = {"/home/thuy-anh/Assignment3CompVision/plan1.jpg", "/home/thuy-anh/Assignment3CompVision/plan2.jpg"};
-/*
+
+    /*
     // Load Part1 images
     vector<Mat> Images_part1;
     for(int i = 0; i < NUM_IMAGES_PART1; i++)
@@ -68,7 +88,7 @@ int main()
     }
 */
     // Call Part1 function
-    //Part1(Images_part1);
+    Part1(images);
     // Call Part2 function
     return 0;
 }
@@ -120,7 +140,7 @@ bool YaleDatasetLoader(vector<Mat> &dataset, const string baseAddress, const str
         // load image
         string imgAddress = baseAddress + '/' + imgNameWithoutR;
         //string imgAddress = "/home/thuy-anh/Assignment5/Training Images/yaleB11_P00A+000E+00.pgm";
-        Mat img = imread(imgAddress, CV_LOAD_IMAGE_GRAYSCALE);
+        Mat img = imread(imgAddress, CV_LOAD_IMAGE_UNCHANGED);
         // check image data
         if (!img.data)
         {
@@ -128,7 +148,7 @@ bool YaleDatasetLoader(vector<Mat> &dataset, const string baseAddress, const str
             return false;
         }
         // convert image to double
-        img.convertTo(img, CV_64F);
+        //img.convertTo(img, CV_64F);
         // store to dataset
         //YaleData ydata = { img, subj, pose, illum };
         dataset.push_back(img);
@@ -138,8 +158,8 @@ bool YaleDatasetLoader(vector<Mat> &dataset, const string baseAddress, const str
     return true;
 }
 
-void Part1 (vector<Mat> &Images) {
-    Mat image1 = Images[0];
+void Part1 (vector<Face_Bounding> &faces) {
+    Mat image1 = faces[0].image;
     Ptr<FeatureDetector> FeatureDetectorSIFT = FeatureDetector::create("SIFT");
     vector <KeyPoint> keyPoints1;
 
@@ -150,7 +170,7 @@ void Part1 (vector<Mat> &Images) {
 
     Ptr<DescriptorExtractor> FeatureDescriptor = DescriptorExtractor::create("SIFT");
 
-    vector< vector<Point2d> > boundingBoxes;
+    /*vector< vector<Point2d> > boundingBoxes;
     Point2d point1;
     Point2d point2;
     point1.x = 119;
@@ -160,17 +180,17 @@ void Part1 (vector<Mat> &Images) {
     vector<Point2d> rectangle;
     rectangle.push_back(point1);
     rectangle.push_back(point2);
-    boundingBoxes.push_back(rectangle);
+    boundingBoxes.push_back(rectangle);*/
 
     //Discard the keypoints that are outside of the bounding box
     int i;
     vector<int> keyPointsInBoxIndex;
     vector<KeyPoint> keyPointsInBox;
-    cv::rectangle(image1,boundingBoxes[0][0],boundingBoxes[0][1],1,8,0);
+    cv::rectangle(image1,faces[0].top_left,faces[0].bottom_right,1,8,0);
     //point1.x =
     for (i = 0; i < keyPoints1.size(); i++){
         //if keypoint is inside then
-        bool inBox = in_box(keyPoints1[i].pt,boundingBoxes[0][0],boundingBoxes[0][1]);
+        bool inBox = in_box(keyPoints1[i].pt,faces[0].top_left,faces[0].bottom_right);
         if (inBox){
                 keyPointsInBoxIndex.push_back(i);
                 keyPointsInBox.push_back(keyPoints1[i]);
@@ -178,9 +198,9 @@ void Part1 (vector<Mat> &Images) {
     }
 
     Mat outputImageSIFT;
-    //drawKeypoints(image1, keyPointsInBox, outputImageSIFT,Scalar::all(-1), DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-    //imshow("Hello",outputImageSIFT);
-    //waitKey(0);
+    drawKeypoints(image1, keyPointsInBox, outputImageSIFT,Scalar::all(-1), DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+    imshow("Hello",outputImageSIFT);
+    waitKey(0);
 
     Mat extractedDescriptors1;
     vector< vector<double> > extractedDescriptorsInBox;
@@ -203,7 +223,7 @@ void Part1 (vector<Mat> &Images) {
 
     for (t=0; t < 50; t++){
         histogram[t]=0;
-        cout << histogram[t] << "\n";
+        //cout << histogram[t] << "\n";
     }
     int center;
     vector< vector<double> > centerOfDescriptors;
