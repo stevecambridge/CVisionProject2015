@@ -12,6 +12,24 @@ Mat RANSACDLT(vector<Point2d> keypoints1, vector<Point2d> keypoints2);
 vector<int> lbp_histogram(Mat img_window);
 int lbp_val(Mat img, int i, int j);
 bool YaleDatasetLoader(vector<Mat> &dataset, const string baseAddress, const string fileList);
+void lbp_extract(Mat face, int W, int H);
+
+typedef struct Face_Bounding 
+{
+    Point2d top_left;
+    Point2d bottom_right;
+    Mat image;
+} Face_Bounding;
+
+Face_Bounding *new_face_bounding(Mat im, Point2d top_left, Point2d bottom_right)
+{
+    Face_Bounding *out = (Face_Bounding *)(malloc(sizeof(Face_Bounding)));
+    out->top_left = top_left;
+    out->bottom_right = bottom_right;
+    out->image = im;
+    return out;
+}
+
 
 int main()
 {
@@ -128,6 +146,7 @@ void Part1 (vector<Mat> &Images) {
     //Stores the keypoints for the first and second image
     FeatureDetectorSIFT->detect(image1, keyPoints1);
 
+    //vector of face images with bounding boxes
 
     Ptr<DescriptorExtractor> FeatureDescriptor = DescriptorExtractor::create("SIFT");
 
