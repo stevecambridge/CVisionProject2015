@@ -2,6 +2,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/nonfree/nonfree.hpp>
 #include <iostream>
+#include <fstream>
 using namespace cv;
 using namespace std;
 // Functions prototypes
@@ -10,20 +11,30 @@ void Part2(vector<Mat> &Images);
 Mat RANSACDLT(vector<Point2d> keypoints1, vector<Point2d> keypoints2);
 vector<int> lbp_histogram(Mat img_window);
 int lbp_val(Mat img, int i, int j);
+bool YaleDatasetLoader(vector<Mat> &dataset, const string baseAddress, const string fileList);
 
 int main()
 {
     // Initialize OpenCV nonfree module
     initModule_nonfree();
 
+    /* Load the training images */
+    vector<Mat> pictures;
+    // put the full address of the Training Images.txt here
+    const string trainingfilelist = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damien.txt";
+    // put the full address of the Training Images folder here
+    const string trainingBaseAddress = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/close";
+    // Load the training dataset
+    YaleDatasetLoader(pictures, trainingBaseAddress, trainingfilelist);
+
     // Set the dir/name of each image for Part1 here
     const int NUM_IMAGES_PART1 = 1;
-    const string IMG_NAMES_PART1[] = {"/home/thuy-anh/FaceRecognitionProject/TA1.jpg"};
+    //const string IMG_NAMES_PART1[] = {"/home/thuy-anh/FaceRecognitionProject/TA1.jpg",""};
 
     // Set the dir/name of each image for Part1 here
     const int NUM_IMAGES_PART2 = 2;
-    const string IMG_NAMES_PART2[] = {"/home/thuy-anh/Assignment3CompVision/plan1.jpg", "/home/thuy-anh/Assignment3CompVision/plan2.jpg"};
-
+    //const string IMG_NAMES_PART2[] = {"/home/thuy-anh/Assignment3CompVision/plan1.jpg", "/home/thuy-anh/Assignment3CompVision/plan2.jpg"};
+/*
     // Load Part1 images
     vector<Mat> Images_part1;
     for(int i = 0; i < NUM_IMAGES_PART1; i++)
@@ -37,9 +48,9 @@ int main()
     {
         Images_part2.push_back( imread( IMG_NAMES_PART2[i] ) );
     }
-
+*/
     // Call Part1 function
-    Part1(Images_part1);
+    //Part1(Images_part1);
     // Call Part2 function
     return 0;
 }
@@ -60,6 +71,52 @@ bool in_box(Point2d in, Point2d box1, Point2d box2)
     {
         return false;
     }
+    return true;
+}
+
+bool YaleDatasetLoader(vector<Mat> &dataset, const string baseAddress, const string fileList)
+{
+    ifstream infile(fileList);
+    cout << "Checking fileList" << endl;
+    if (!infile.is_open())
+    {
+        cout << "\tError: Cannot find the fileList in " << fileList << endl;
+        return false;
+    }
+    cout << "\tOK!" << endl;
+
+    cout << "Loading Images" << endl;
+    string imgName;
+    while (getline(infile, imgName))
+    {
+        // Parse filenames
+        //unsigned first = imgName.find("B")+1;
+        //unsigned second = imgName.find("P");
+        //unsigned third = imgName.find("A");
+        //unsigned last = imgName.find(".");
+        //int subj = stoi(imgName.substr(first, second - first));
+        //int pose = stoi(imgName.substr(second + 1, third - second - 1));
+        //string illum = imgName.substr(third + 1, last - third - 1);
+        string imgNameWithoutR = imgName.substr(0,imgName.find("\r"));
+
+        // load image
+        string imgAddress = baseAddress + '/' + imgNameWithoutR;
+        //string imgAddress = "/home/thuy-anh/Assignment5/Training Images/yaleB11_P00A+000E+00.pgm";
+        Mat img = imread(imgAddress, CV_LOAD_IMAGE_GRAYSCALE);
+        // check image data
+        if (!img.data)
+        {
+            cout << "\tError loading image in " << imgAddress << endl;
+            return false;
+        }
+        // convert image to double
+        img.convertTo(img, CV_64F);
+        // store to dataset
+        //YaleData ydata = { img, subj, pose, illum };
+        dataset.push_back(img);
+    }
+    cout << "\tDone loading " << dataset.size() << " images" << endl;
+
     return true;
 }
 

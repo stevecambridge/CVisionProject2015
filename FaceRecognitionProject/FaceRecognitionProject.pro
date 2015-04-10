@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2015-03-26T15:48:09
+# Project created by QtCreator 2015-02-14T19:40:22
 #
 #-------------------------------------------------
 
@@ -8,15 +8,15 @@ QT       += core
 
 QT       -= gui
 
-TARGET = FaceRecognitionProject
+TARGET = Assignment5
 CONFIG   += console
 CONFIG   -= app_bundle
 
 TEMPLATE = app
-CONFIG += c++11
-
 
 INCLUDEPATH += LIBS += "/usr/local/include/"
+
+CONFIG += c++11
 
 debug{
 
@@ -40,6 +40,5 @@ LIBS += "/usr/local/lib/libopencv_nonfree.so.2.4.2"
 
 
 }
-
 
 SOURCES += main.cpp
