@@ -42,31 +42,31 @@ int main()
     images.push_back(face);
     face = {Point2d(61,122),Point2d(416,609),pictures[1]};
     images.push_back(face);
-    face = {Point2d(53,78),Point2d(438,602),pictures[1]};
+    face = {Point2d(53,78),Point2d(438,602),pictures[2]};
     images.push_back(face);
-    face = {Point2d(65,110),Point2d(507,627),pictures[1]};
+    face = {Point2d(65,110),Point2d(507,627),pictures[3]};
     images.push_back(face);
-    face = {Point2d(71,92),Point2d(511,619),pictures[1]};
+    face = {Point2d(71,92),Point2d(511,619),pictures[4]};
     images.push_back(face);
-    face = {Point2d(189,208),Point2d(399,436),pictures[1]};
+    face = {Point2d(189,208),Point2d(399,436),pictures[5]};
     images.push_back(face);
-    face = {Point2d(192,231),Point2d(395,469),pictures[1]};
+    face = {Point2d(192,231),Point2d(395,469),pictures[6]};
     images.push_back(face);
-    face = {Point2d(154,234),Point2d(380,488),pictures[1]};
+    face = {Point2d(154,234),Point2d(380,488),pictures[7]};
     images.push_back(face);
-    face = {Point2d(176,216),Point2d(420,474),pictures[1]};
+    face = {Point2d(176,216),Point2d(420,474),pictures[8]};
     images.push_back(face);
-    face = {Point2d(142,195),Point2d(441,463),pictures[1]};
+    face = {Point2d(142,195),Point2d(441,463),pictures[9]};
     images.push_back(face);
-    face = {Point2d(236,231),Point2d(367,361),pictures[1]};
+    face = {Point2d(236,231),Point2d(367,361),pictures[10]};
     images.push_back(face);
-    face = {Point2d(217,233),Point2d(381,387),pictures[1]};
+    face = {Point2d(217,233),Point2d(381,387),pictures[11]};
     images.push_back(face);
-    face = {Point2d(189,244),Point2d(376,408),pictures[1]};
+    face = {Point2d(189,244),Point2d(376,408),pictures[12]};
     images.push_back(face);
-    face = {Point2d(218,257),Point2d(395,413),pictures[1]};
+    face = {Point2d(218,257),Point2d(395,413),pictures[13]};
     images.push_back(face);
-    face = {Point2d(215,247),Point2d(394,413),pictures[1]};
+    face = {Point2d(215,247),Point2d(394,413),pictures[14]};
     images.push_back(face);
     //imshow("hello",images[1].image);
     //waitKey(0);
@@ -159,7 +159,10 @@ bool YaleDatasetLoader(vector<Mat> &dataset, const string baseAddress, const str
 }
 
 void Part1 (vector<Face_Bounding> &faces) {
-    Mat image1 = faces[0].image;
+    Mat descriptors;
+    int s;
+    for (s = 0; s < faces.size(); s++){
+    Mat image1 = faces[s].image;
     Ptr<FeatureDetector> FeatureDetectorSIFT = FeatureDetector::create("SIFT");
     vector <KeyPoint> keyPoints1;
 
@@ -170,27 +173,15 @@ void Part1 (vector<Face_Bounding> &faces) {
 
     Ptr<DescriptorExtractor> FeatureDescriptor = DescriptorExtractor::create("SIFT");
 
-    /*vector< vector<Point2d> > boundingBoxes;
-    Point2d point1;
-    Point2d point2;
-    point1.x = 119;
-    point1.y = 111;
-    point2.x = 437;
-    point2.y = 577;
-    vector<Point2d> rectangle;
-    rectangle.push_back(point1);
-    rectangle.push_back(point2);
-    boundingBoxes.push_back(rectangle);*/
-
     //Discard the keypoints that are outside of the bounding box
     int i;
     vector<int> keyPointsInBoxIndex;
     vector<KeyPoint> keyPointsInBox;
-    cv::rectangle(image1,faces[0].top_left,faces[0].bottom_right,1,8,0);
+    cv::rectangle(image1,faces[s].top_left,faces[s].bottom_right,1,8,0);
     //point1.x =
     for (i = 0; i < keyPoints1.size(); i++){
         //if keypoint is inside then
-        bool inBox = in_box(keyPoints1[i].pt,faces[0].top_left,faces[0].bottom_right);
+        bool inBox = in_box(keyPoints1[i].pt,faces[s].top_left,faces[s].bottom_right);
         if (inBox){
                 keyPointsInBoxIndex.push_back(i);
                 keyPointsInBox.push_back(keyPoints1[i]);
@@ -199,22 +190,23 @@ void Part1 (vector<Face_Bounding> &faces) {
 
     Mat outputImageSIFT;
     drawKeypoints(image1, keyPointsInBox, outputImageSIFT,Scalar::all(-1), DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-    imshow("Hello",outputImageSIFT);
-    waitKey(0);
+    //imshow("Hello",outputImageSIFT);
+    //waitKey(0);
 
     Mat extractedDescriptors1;
-    vector< vector<double> > extractedDescriptorsInBox;
     //stores the SIFT descriptors for the first and second image
     FeatureDescriptor->compute(image1,keyPointsInBox,extractedDescriptors1);
-    int y;
-    for (y = 0; y < extractedDescriptors1.rows; y++){
-       extractedDescriptorsInBox.push_back(extractedDescriptors1.row(y));
+    descriptors.push_back(extractedDescriptors1);
     }
     Mat labels, centers;
-    kmeans(extractedDescriptors1, 50, labels,
+    kmeans(descriptors, 50, labels,
                 TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 10, 1.0),
                    3, KMEANS_PP_CENTERS, centers);
     cout << "hello";
+
+
+    //For each picture, we take its descriptors and put it in the bin with
+    //the closest center
     double newNorm;
     double norm = 10000;
     int histogram[50];
@@ -228,10 +220,11 @@ void Part1 (vector<Face_Bounding> &faces) {
     int center;
     vector< vector<double> > centerOfDescriptors;
     int x;
-    for(x = 0; x < extractedDescriptors1.rows; x++){
+    int i;
+    for(x = 0; x < descriptors.rows; x++){
         for (i = 0; i < centers.rows; i++){
             //computes the euclidean distance between the two descriptors
-            newNorm = cv::norm(extractedDescriptors1.row(x) - centers.row(i));
+            newNorm = cv::norm(descriptors.row(x) - centers.row(i));
             //Store the best match with that descriptor
             if (newNorm < norm){
                norm = newNorm;
