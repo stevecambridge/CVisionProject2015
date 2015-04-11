@@ -20,8 +20,8 @@ int lbp_val(Mat img, int i, int j);
 bool YaleDatasetLoader(vector<Mat> &dataset, const string baseAddress, const string fileList);
 Mat lbp_extract(Mat face, int W, int H);
 int nearest_centre(Mat row, Mat centres);
-void lbp_cluster(Mat lbp_features, vector<Face_Bounding> faces);
-void lbp_main(vector<Face_Bounding> faces);
+vector< vector<int> > lbp_cluster(Mat lbp_features, vector<Face_Bounding> faces);
+vector< vector<int> > lbp_main(vector<Face_Bounding> faces);
 
 
 
@@ -345,7 +345,7 @@ void Part1 (vector<Face_Bounding> &faces) {
     } */
 }
 
-void lbp_main(vector<Face_Bounding> faces)
+vector< vector<int> > lbp_main(vector<Face_Bounding> faces)
 {
     Mat descriptors;
     for(int i=0; i<faces.size(); i++)
@@ -356,12 +356,13 @@ void lbp_main(vector<Face_Bounding> faces)
     }
 
     //cluster that ish
-    lbp_cluster(descriptors, faces);
+    return lbp_cluster(descriptors, faces);
 }
 
 
-//should return lbp codebook
-void lbp_cluster(Mat lbp_features, vector<Face_Bounding> faces)
+//returns a vector containing histograms of code words
+//this is each image's representation as a histogram of code words
+vector< vector<int> > lbp_cluster(Mat lbp_features, vector<Face_Bounding> faces)
 {
     //clustering descriptors
     Mat labels, centres;
@@ -393,6 +394,8 @@ void lbp_cluster(Mat lbp_features, vector<Face_Bounding> faces)
 
         faces_codewords.push_back(codewords);
     }
+
+    return faces_codewords;
 }
 
 //get the nearest cluster centre, ie. to which cluster does this feature belong
