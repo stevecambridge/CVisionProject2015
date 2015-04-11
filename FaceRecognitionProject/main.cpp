@@ -20,8 +20,6 @@ int lbp_val(Mat img, int i, int j);
 bool YaleDatasetLoader(vector<Mat> &dataset, const string baseAddress, const string fileList);
 void lbp_extract(Mat face, int W, int H);
 
-
-
 int main()
 {
     // Initialize OpenCV nonfree module
@@ -179,7 +177,7 @@ int main()
     //waitKey(0);
 
     // Call Part1 function
-    //Part1(images);
+    Part1(images);
     // Call Part2 function
     return 0;
 }
