@@ -3,11 +3,13 @@
 #include <opencv2/nonfree/nonfree.hpp>
 #include <iostream>
 #include <fstream>
+#include <string>
 using namespace cv;
 using namespace std;
 // Functions prototypes
 struct Face_Bounding
 {
+    string name;
     Point2d top_left;
     Point2d bottom_right;
     Mat image;
@@ -20,8 +22,9 @@ int lbp_val(Mat img, int i, int j);
 bool YaleDatasetLoader(vector<Mat> &dataset, const string baseAddress, const string fileList);
 Mat lbp_extract(Mat face, int W, int H);
 int nearest_centre(Mat row, Mat centres);
-vector< vector<int> > lbp_cluster(Mat lbp_features, vector<Face_Bounding> faces);
+vector< vector<int> > lbp_cluster(Mat lbp_features, vector<Face_Bounding> faces, Mat centres);
 vector< vector<int> > lbp_main(vector<Face_Bounding> faces);
+int nearest_face(vector<int> test_hist, vector< vector<int> > trained_hists);
 
 
 
@@ -51,131 +54,131 @@ int main()
     vector<Face_Bounding> images;
     //begin damien photos
     //Close, medium and then far
-    Face_Bounding face = {Point2d(117,108),Point2d(441,572),pictures[0]};
+    Face_Bounding face = {"damien", Point2d(117,108),Point2d(441,572),pictures[0]};
     images.push_back(face);
-    face = {Point2d(61,122),Point2d(416,609),pictures[1]};
+    face = {"damien", Point2d(61,122),Point2d(416,609),pictures[1]};
     images.push_back(face);
-    face = {Point2d(53,78),Point2d(438,602),pictures[2]};
+    face = {"damien", Point2d(53,78),Point2d(438,602),pictures[2]};
     images.push_back(face);
-    face = {Point2d(65,110),Point2d(507,627),pictures[3]};
+    face = {"damien", Point2d(65,110),Point2d(507,627),pictures[3]};
     images.push_back(face);
-    face = {Point2d(71,92),Point2d(511,619),pictures[4]};
+    face = {"damien", Point2d(71,92),Point2d(511,619),pictures[4]};
     images.push_back(face);
-    face = {Point2d(189,208),Point2d(399,436),pictures[5]};
+    face = {"damien", Point2d(189,208),Point2d(399,436),pictures[5]};
     images.push_back(face);
-    face = {Point2d(192,231),Point2d(395,469),pictures[6]};
+    face = {"damien", Point2d(192,231),Point2d(395,469),pictures[6]};
     images.push_back(face);
-    face = {Point2d(154,234),Point2d(380,488),pictures[7]};
+    face = {"damien", Point2d(154,234),Point2d(380,488),pictures[7]};
     images.push_back(face);
-    face = {Point2d(176,216),Point2d(420,474),pictures[8]};
+    face = {"damien", Point2d(176,216),Point2d(420,474),pictures[8]};
     images.push_back(face);
-    face = {Point2d(142,195),Point2d(441,463),pictures[9]};
+    face = {"damien", Point2d(142,195),Point2d(441,463),pictures[9]};
     images.push_back(face);
-    face = {Point2d(236,231),Point2d(367,361),pictures[10]};
+    face = {"damien", Point2d(236,231),Point2d(367,361),pictures[10]};
     images.push_back(face);
-    face = {Point2d(217,233),Point2d(381,387),pictures[11]};
+    face = {"damien", Point2d(217,233),Point2d(381,387),pictures[11]};
     images.push_back(face);
-    face = {Point2d(189,244),Point2d(376,408),pictures[12]};
+    face = {"damien", Point2d(189,244),Point2d(376,408),pictures[12]};
     images.push_back(face);
-    face = {Point2d(218,257),Point2d(395,413),pictures[13]};
+    face = {"damien", Point2d(218,257),Point2d(395,413),pictures[13]};
     images.push_back(face);
-    face = {Point2d(215,247),Point2d(394,413),pictures[14]};
+    face = {"damien", Point2d(215,247),Point2d(394,413),pictures[14]};
     images.push_back(face);
 
     //begin steve photos
-    face = {Point2d(64,146),Point2d(454,659),pictures[15]};
+    face = {"steve", Point2d(64,146),Point2d(454,659),pictures[15]};
     images.push_back(face);
-    face = {Point2d(91,167),Point2d(467,684),pictures[16]};
+    face = {"steve", Point2d(91,167),Point2d(467,684),pictures[16]};
     images.push_back(face);
-    face = {Point2d(119,141),Point2d(459,650),pictures[17]};
+    face = {"steve", Point2d(119,141),Point2d(459,650),pictures[17]};
     images.push_back(face);
-    face = {Point2d(123,137),Point2d(530,639),pictures[18]};
+    face = {"steve", Point2d(123,137),Point2d(530,639),pictures[18]};
     images.push_back(face);
-    face = {Point2d(103,132),Point2d(534,668),pictures[19]};
+    face = {"steve", Point2d(103,132),Point2d(534,668),pictures[19]};
     images.push_back(face);
-    face = {Point2d(141,246),Point2d(402,558),pictures[20]};
+    face = {"steve", Point2d(141,246),Point2d(402,558),pictures[20]};
     images.push_back(face);
-    face = {Point2d(181,234),Point2d(407,539),pictures[21]};
+    face = {"steve", Point2d(181,234),Point2d(407,539),pictures[21]};
     images.push_back(face);
-    face = {Point2d(189,226),Point2d(423,531),pictures[22]};
+    face = {"steve", Point2d(189,226),Point2d(423,531),pictures[22]};
     images.push_back(face);
-    face = {Point2d(190,220),Point2d(450,530),pictures[23]};
+    face = {"steve", Point2d(190,220),Point2d(450,530),pictures[23]};
     images.push_back(face);
-    face = {Point2d(185,193),Point2d(463,528),pictures[24]};
+    face = {"steve", Point2d(185,193),Point2d(463,528),pictures[24]};
     images.push_back(face);
-    face = {Point2d(240,103),Point2d(356,262),pictures[25]};
+    face = {"steve", Point2d(240,103),Point2d(356,262),pictures[25]};
     images.push_back(face);
-    face = {Point2d(235,96),Point2d(353,278),pictures[26]};
+    face = {"steve", Point2d(235,96),Point2d(353,278),pictures[26]};
     images.push_back(face);
-    face = {Point2d(251,98),Point2d(367,250),pictures[27]};
+    face = {"steve", Point2d(251,98),Point2d(367,250),pictures[27]};
     images.push_back(face);
-    face = {Point2d(242,100),Point2d(366,266),pictures[28]};
+    face = {"steve", Point2d(242,100),Point2d(366,266),pictures[28]};
     images.push_back(face);
-    face = {Point2d(239,107),Point2d(372,263),pictures[29]};
+    face = {"steve", Point2d(239,107),Point2d(372,263),pictures[29]};
     images.push_back(face);
 
     //begin dan photos
-    face = {Point2d(127,11),Point2d(524,572),pictures[30]};
+    face = {"dan", Point2d(127,11),Point2d(524,572),pictures[30]};
     images.push_back(face);
-    face = {Point2d(135,121),Point2d(478,562),pictures[31]};
+    face = {"dan", Point2d(135,121),Point2d(478,562),pictures[31]};
     images.push_back(face);
-    face = {Point2d(129,123),Point2d(449,579),pictures[32]};
+    face = {"dan", Point2d(129,123),Point2d(449,579),pictures[32]};
     images.push_back(face);
-    face = {Point2d(127,117),Point2d(493,586),pictures[33]};
+    face = {"dan", Point2d(127,117),Point2d(493,586),pictures[33]};
     images.push_back(face);
-    face = {Point2d(91,116),Point2d(480,560),pictures[34]};
+    face = {"dan", Point2d(91,116),Point2d(480,560),pictures[34]};
     images.push_back(face);
-    face = {Point2d(175,178),Point2d(408,457),pictures[35]};
+    face = {"dan", Point2d(175,178),Point2d(408,457),pictures[35]};
     images.push_back(face);
-    face = {Point2d(179,187),Point2d(407,469),pictures[36]};
+    face = {"dan", Point2d(179,187),Point2d(407,469),pictures[36]};
     images.push_back(face);
-    face = {Point2d(180,190),Point2d(380,455),pictures[37]};
+    face = {"dan", Point2d(180,190),Point2d(380,455),pictures[37]};
     images.push_back(face);
-    face = {Point2d(172,190),Point2d(380,442),pictures[38]};
+    face = {"dan", Point2d(172,190),Point2d(380,442),pictures[38]};
     images.push_back(face);
-    face = {Point2d(166,190),Point2d(391,444),pictures[39]};
+    face = {"dan", Point2d(166,190),Point2d(391,444),pictures[39]};
     images.push_back(face);
-    face = {Point2d(237,228),Point2d(371,388),pictures[40]};
+    face = {"dan", Point2d(237,228),Point2d(371,388),pictures[40]};
     images.push_back(face);
-    face = {Point2d(225,234),Point2d(376,409),pictures[41]};
+    face = {"dan", Point2d(225,234),Point2d(376,409),pictures[41]};
     images.push_back(face);
-    face = {Point2d(217,231),Point2d(360,413),pictures[42]};
+    face = {"dan", Point2d(217,231),Point2d(360,413),pictures[42]};
     images.push_back(face);
-    face = {Point2d(232,217),Point2d(375,390),pictures[43]};
+    face = {"dan", Point2d(232,217),Point2d(375,390),pictures[43]};
     images.push_back(face);
-    face = {Point2d(203,227),Point2d(347,389),pictures[44]};
+    face = {"dan", Point2d(203,227),Point2d(347,389),pictures[44]};
     images.push_back(face);
 
     //begin thuyanh
-    face = {Point2d(127,11),Point2d(524,572),pictures[45]};
+    face = {"thuy-anh", Point2d(127,11),Point2d(524,572),pictures[45]};
     images.push_back(face);
-    face = {Point2d(135,121),Point2d(478,562),pictures[46]};
+    face = {"thuy-anh", Point2d(135,121),Point2d(478,562),pictures[46]};
     images.push_back(face);
-    face = {Point2d(129,123),Point2d(449,579),pictures[47]};
+    face = {"thuy-anh", Point2d(129,123),Point2d(449,579),pictures[47]};
     images.push_back(face);
-    face = {Point2d(127,117),Point2d(493,586),pictures[48]};
+    face = {"thuy-anh", Point2d(127,117),Point2d(493,586),pictures[48]};
     images.push_back(face);
-    face = {Point2d(91,116),Point2d(480,560),pictures[49]};
+    face = {"thuy-anh", Point2d(91,116),Point2d(480,560),pictures[49]};
     images.push_back(face);
-    face = {Point2d(175,178),Point2d(408,457),pictures[50]};
+    face = {"thuy-anh", Point2d(175,178),Point2d(408,457),pictures[50]};
     images.push_back(face);
-    face = {Point2d(179,187),Point2d(407,469),pictures[51]};
+    face = {"thuy-anh", Point2d(179,187),Point2d(407,469),pictures[51]};
     images.push_back(face);
-    face = {Point2d(180,190),Point2d(380,455),pictures[52]};
+    face = {"thuy-anh", Point2d(180,190),Point2d(380,455),pictures[52]};
     images.push_back(face);
-    face = {Point2d(172,190),Point2d(380,442),pictures[53]};
+    face = {"thuy-anh", Point2d(172,190),Point2d(380,442),pictures[53]};
     images.push_back(face);
-    face = {Point2d(166,190),Point2d(391,444),pictures[54]};
+    face = {"thuy-anh", Point2d(166,190),Point2d(391,444),pictures[54]};
     images.push_back(face);
-    face = {Point2d(237,228),Point2d(371,388),pictures[55]};
+    face = {"thuy-anh", Point2d(237,228),Point2d(371,388),pictures[55]};
     images.push_back(face);
-    face = {Point2d(225,234),Point2d(376,409),pictures[56]};
+    face = {"thuy-anh", Point2d(225,234),Point2d(376,409),pictures[56]};
     images.push_back(face);
-    face = {Point2d(217,231),Point2d(360,413),pictures[57]};
+    face = {"thuy-anh", Point2d(217,231),Point2d(360,413),pictures[57]};
     images.push_back(face);
-    face = {Point2d(232,217),Point2d(375,390),pictures[58]};
+    face = {"thuy-anh", Point2d(232,217),Point2d(375,390),pictures[58]};
     images.push_back(face);
-    face = {Point2d(203,227),Point2d(347,389),pictures[59]};
+    face = {"thuy-anh", Point2d(203,227),Point2d(347,389),pictures[59]};
     images.push_back(face);
 
     //imshow("hello",images[1].image);
@@ -345,7 +348,57 @@ void Part1 (vector<Face_Bounding> &faces) {
     } */
 }
 
-vector< vector<int> > lbp_main(vector<Face_Bounding> faces)
+void lbp_recognition_results(vector<Face_Bounding> test_faces, vector<Face_Bounding> faces, Mat centres, vector< vector<int> > faces_as_codewords)
+{
+    //for each face
+    Mat features;
+    int errors = 0;
+    for(int i=0; i<test_faces.size(); i++)
+    {
+        Rect bounding_box = Rect(test_faces[i].top_left, test_faces[i].bottom_right);
+        features = lbp_extract(Mat(test_faces[i].image, bounding_box), 10, 10);
+
+        //run through and generate a histogram of code words
+        vector<int> codewords;
+        for(int j=0; j<50; j++)
+        {
+            codewords.push_back(0);
+        }
+
+        //for each feature in this face
+        for(int j=0; j<features.rows; j++)
+        {
+            codewords[nearest_centre(features.row(j), centres)] += 1;
+        }
+        //codewords contains the test image's representation as a collection of code words
+        //find nearest vector in faces_as_codewords, which is the representation of the training images
+        int matched_face = nearest_face(codewords, faces_as_codewords);
+        if(test_faces[i].name.compare(faces[matched_face].name) != 0)
+        {
+            errors += 1;
+        }
+    }
+    cout << "errors:" << errors << endl;
+}
+
+int nearest_face(vector<int> test_hist, vector< vector<int> > trained_hists)
+{
+    int min_dist = norm(test_hist, trained_hists[0]);
+    int nearest = 0;
+    int test_dist;
+    for(int i=1; i<trained_hists.size(); i++)
+    {
+        test_dist = norm(test_hist, trained_hists[i]);
+        if(test_dist < min_dist)
+        {
+            min_dist = test_dist;
+            nearest = i;
+        }
+    }
+    return nearest;
+}
+
+vector< vector<int> > lbp_main(vector<Face_Bounding> faces, vector<Face_Bounding> test_faces)
 {
     Mat descriptors;
     for(int i=0; i<faces.size(); i++)
@@ -356,16 +409,21 @@ vector< vector<int> > lbp_main(vector<Face_Bounding> faces)
     }
 
     //cluster that ish
-    return lbp_cluster(descriptors, faces);
+    Mat centres;
+    vector< vector<int> > faces_as_codewords = lbp_cluster(descriptors, faces, centres);
+
+    lbp_recognition_results(test_faces, faces, centres, faces_as_codewords);
+
+    return faces_as_codewords;
 }
 
 
 //returns a vector containing histograms of code words
 //this is each image's representation as a histogram of code words
-vector< vector<int> > lbp_cluster(Mat lbp_features, vector<Face_Bounding> faces)
+vector< vector<int> > lbp_cluster(Mat lbp_features, vector<Face_Bounding> faces, Mat centres)
 {
     //clustering descriptors
-    Mat labels, centres;
+    Mat labels;
     kmeans(lbp_features, 50, labels,
                 TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 10, 1.0),
                    3, KMEANS_PP_CENTERS, centres);
