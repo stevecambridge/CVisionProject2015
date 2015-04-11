@@ -16,11 +16,13 @@ struct Face_Bounding
 };
 void Part1 (vector<Face_Bounding> &faces, vector<vector<int>> &histogramsForFaces, Mat &centers);
 Mat RANSACDLT(vector<Point2d> keypoints1, vector<Point2d> keypoints2);
+void generateHistograms(vector<Face_Bounding> &faces, Mat centers, Mat histogramTestImages);
 int* lbp_histogram(Mat img_window);
 int lbp_val(Mat img, int i, int j);
 bool YaleDatasetLoader(vector<Mat> &dataset, const string baseAddress, const string fileList);
 Mat lbp_extract(Mat face, int W, int H);
 int nearest_centre(Mat row, Mat centres);
+bool in_box(Point2d in, Point2d box1, Point2d box2);
 vector< vector<int> > lbp_cluster(Mat lbp_features, vector<Face_Bounding> faces, Mat centres);
 vector< vector<int> > lbp_main(vector<Face_Bounding> faces, vector<Face_Bounding> test_faces);
 int nearest_face(vector<int> test_hist, vector< vector<int> > trained_hists);
@@ -191,6 +193,7 @@ int main()
     /* Load the testing images */
     vector<Mat> picturesTest;
     // put the full address of the Training Images.txt here
+
     //const string trainingfilelistDamienTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damienTest.txt";
     const string trainingfilelistSteveTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/steveTest.txt";
     const string trainingfilelistDanTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/danTest.txt";
@@ -301,6 +304,12 @@ int main()
 
     vector<vector<int>> histogramTestImages;
     generateHistograms(imagesTest,centers,histogramTestImages);
+
+    // Mat histogramTestImages;
+    // generateHistograms(imagesTest,centers,histogramTestImages);
+
+    //lbp_main(images, imagesTest);
+
 
     /*int g;
     int good = 0;
@@ -536,6 +545,7 @@ void Part1 (vector<Face_Bounding> &faces, vector<vector<int>> &histogramsForFace
     descriptorsForEach.push_back(extractedDescriptors1);
     }
     Mat labels;
+
     kmeans(descriptors, 5, labels,
                 TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 10, 1.0),
                    3, KMEANS_PP_CENTERS, centers);
@@ -667,6 +677,7 @@ vector< vector<int> > lbp_cluster(Mat lbp_features, vector<Face_Bounding> faces,
 {
     //clustering descriptors
     Mat labels;
+    lbp_features.convertTo(lbp_features, CV_32F);
     kmeans(lbp_features, 50, labels,
                 TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 10, 1.0),
                    3, KMEANS_PP_CENTERS, centres);
@@ -703,6 +714,8 @@ vector< vector<int> > lbp_cluster(Mat lbp_features, vector<Face_Bounding> faces,
 int nearest_centre(Mat row, Mat centres)
 {
     int nearest = 0;
+    row.convertTo(row, CV_32F);
+    centres.convertTo(centres, CV_32F);
     int dist = norm(row, centres.row(0));
     int test_dist;
     //for each cluster centre
@@ -735,9 +748,11 @@ Mat lbp_extract(Mat face, int W, int H)
     {
         for(int j=0; j<H; j++)
         {
-            window = Mat(face, Rect(j*col_width, i*row_height, col_width, row_height));
+            Point2d left = Point2d(j*col_width, i*row_height);
+            Point2d right= Point2d(j*col_width+col_width, i*row_height+row_height);
+            window = Mat(face, Rect(left, right));
             histogram = lbp_histogram(window);
-            lbp_feature_row = Mat(1, 256, CV_8UC1, histogram);
+            lbp_feature_row = Mat(1, 256, CV_32F, histogram);
             lbp_features.push_back(lbp_feature_row);
         }
     }
