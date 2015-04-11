@@ -43,10 +43,9 @@ int main()
     YaleDatasetLoader(pictures, trainingBaseAddressDamien, trainingfilelistDamien);
     YaleDatasetLoader(pictures, trainingBaseAddressSteve, trainingfilelistSteve);
     YaleDatasetLoader(pictures, trainingBaseAddressDan, trainingfilelistDan);
-    YaleDatasetLoader(picures, trainingBaseAddressThuyanh, trainingfilelistThuyanh);
+    YaleDatasetLoader(pictures, trainingBaseAddressThuyanh, trainingfilelistThuyanh);
 
     vector<Face_Bounding> images;
-    //new_face_bounding(pictures[0],Point2d(117,108),Point2d(441,572));
     //begin damien photos
     //Close, medium and then far
     Face_Bounding face = {Point2d(117,108),Point2d(441,572),pictures[0]};
@@ -81,13 +80,13 @@ int main()
     images.push_back(face);
 
     //begin steve photos
-    face = {Point2d(64,146),Point2d(454,659),pictures[16]};
+    face = {Point2d(64,146),Point2d(454,659),pictures[15]};
     images.push_back(face);
-    face = {Point2d(91,167),Point2d(467,684),pictures[17]};
+    face = {Point2d(91,167),Point2d(467,684),pictures[16]};
     images.push_back(face);
-    face = {Point2d(119,141),Point2d(459,650),pictures[18]};
+    face = {Point2d(119,141),Point2d(459,650),pictures[17]};
     images.push_back(face);
-    face = {Point2d(123,137),Point2d(530,639),pictures[19]};
+    face = {Point2d(123,137),Point2d(530,639),pictures[1]};
     images.push_back(face);
     face = {Point2d(103,132),Point2d(534,668),pictures[20]};
     images.push_back(face);
@@ -180,7 +179,7 @@ int main()
     //waitKey(0);
 
     // Call Part1 function
-    Part1(images);
+    //Part1(images);
     // Call Part2 function
     return 0;
 }
@@ -292,7 +291,7 @@ void Part1 (vector<Face_Bounding> &faces) {
     FeatureDescriptor->compute(image1,keyPointsInBox,extractedDescriptors1);
     descriptors.push_back(extractedDescriptors1);
     descriptorsForEach.push_back(extractedDescriptors1);
-    }
+    }/*
     Mat labels, centers;
     kmeans(descriptors, 50, labels,
                 TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 10, 1.0),
@@ -340,7 +339,7 @@ void Part1 (vector<Face_Bounding> &faces) {
     cout << "hello";
     Mat histogramToMat = Mat(1,50,CV_8UC1,&histogram);
     histogramsForFaces.push_back(histogramToMat);
-    }
+    } */
 }
 
 //pass the part of the picture within the bounding box
