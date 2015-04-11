@@ -145,35 +145,35 @@ int main()
     images.push_back(face);
 
     //begin thuy-anh's photo
-    face = {Point2d(127,11),Point2d(524,572),pictures[31]};
+    face = {Point2d(123,159),Point2d(469,648),pictures[46]};
     images.push_back(face);
-    face = {Point2d(135,121),Point2d(478,562),pictures[32]};
+    face = {Point2d(102,181),Point2d(419,627),pictures[47]};
     images.push_back(face);
-    face = {Point2d(129,123),Point2d(449,579),pictures[33]};
+    face = {Point2d(102,193),Point2d(409,640),pictures[48]};
     images.push_back(face);
-    face = {Point2d(127,117),Point2d(493,586),pictures[34]};
+    face = {Point2d(133,174),Point2d(451,625),pictures[49]};
     images.push_back(face);
-    face = {Point2d(91,116),Point2d(480,560),pictures[35]};
+    face = {Point2d(131,168),Point2d(477,636),pictures[50]};
     images.push_back(face);
-    face = {Point2d(175,178),Point2d(408,457),pictures[36]};
+    face = {Point2d(195,263),Point2d(399,524),pictures[51]};
     images.push_back(face);
-    face = {Point2d(179,187),Point2d(407,469),pictures[37]};
+    face = {Point2d(187,265),Point2d(390,526),pictures[52]};
     images.push_back(face);
-    face = {Point2d(180,190),Point2d(380,455),pictures[38]};
+    face = {Point2d(194,268),Point2d(383,519),pictures[53]};
     images.push_back(face);
-    face = {Point2d(172,190),Point2d(380,442),pictures[39]};
+    face = {Point2d(244,278),Point2d(430,519),pictures[54]};
     images.push_back(face);
-    face = {Point2d(166,190),Point2d(391,444),pictures[40]};
+    face = {Point2d(217,269),Point2d(414,503),pictures[55]};
     images.push_back(face);
-    face = {Point2d(237,228),Point2d(371,388),pictures[41]};
+    face = {Point2d(230,300),Point2d(365,472),pictures[56]};
     images.push_back(face);
-    face = {Point2d(225,234),Point2d(376,409),pictures[42]};
+    face = {Point2d(232,316),Point2d(343,452),pictures[57]};
     images.push_back(face);
-    face = {Point2d(217,231),Point2d(360,413),pictures[43]};
+    face = {Point2d(249,315),Point2d(373,468),pictures[58]};
     images.push_back(face);
-    face = {Point2d(232,217),Point2d(375,390),pictures[44]};
+    face = {Point2d(250,309),Point2d(361,466),pictures[59]};
     images.push_back(face);
-    face = {Point2d(203,227),Point2d(347,389),pictures[45]};
+    face = {Point2d(253,311),Point2d(361,463),pictures[60]};
     images.push_back(face);
 
     //imshow("hello",images[1].image);
@@ -252,6 +252,8 @@ bool YaleDatasetLoader(vector<Mat> &dataset, const string baseAddress, const str
 
 void Part1 (vector<Face_Bounding> &faces) {
     Mat descriptors;
+    vector<Mat> descriptorsForEach;
+    Mat histogramsForFaces;
     int s;
     for (s = 0; s < faces.size(); s++){
     Mat image1 = faces[s].image;
@@ -269,7 +271,7 @@ void Part1 (vector<Face_Bounding> &faces) {
     int i;
     vector<int> keyPointsInBoxIndex;
     vector<KeyPoint> keyPointsInBox;
-    cv::rectangle(image1,faces[s].top_left,faces[s].bottom_right,1,8,0);
+    //cv::rectangle(image1,faces[s].top_left,faces[s].bottom_right,1,8,0);
     //point1.x =
     for (i = 0; i < keyPoints1.size(); i++){
         //if keypoint is inside then
@@ -289,22 +291,21 @@ void Part1 (vector<Face_Bounding> &faces) {
     //stores the SIFT descriptors for the first and second image
     FeatureDescriptor->compute(image1,keyPointsInBox,extractedDescriptors1);
     descriptors.push_back(extractedDescriptors1);
+    descriptorsForEach.push_back(extractedDescriptors1);
     }
     Mat labels, centers;
     kmeans(descriptors, 50, labels,
                 TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 10, 1.0),
                    3, KMEANS_PP_CENTERS, centers);
-    cout << "hello";
 
-
+    int j;
+    for (j = 0; j < faces.size(); j++){
     //For each picture, we take its descriptors and put it in the bin with
     //the closest center
     double newNorm;
     double norm = 10000;
     int histogram[50];
     int t;
-    vector<int> histo;
-
     for (t=0; t < 50; t++){
         histogram[t]=0;
         //cout << histogram[t] << "\n";
@@ -313,7 +314,7 @@ void Part1 (vector<Face_Bounding> &faces) {
     vector< vector<double> > centerOfDescriptors;
     int x;
     int i;
-    for(x = 0; x < descriptors.rows; x++){
+    for(x = 0; x < descriptorsForEach[j].rows; x++){
         for (i = 0; i < centers.rows; i++){
             //computes the euclidean distance between the two descriptors
             newNorm = cv::norm(descriptors.row(x) - centers.row(i));
@@ -337,6 +338,9 @@ void Part1 (vector<Face_Bounding> &faces) {
     cout << histogram[p] << "\n";
     }
     cout << "hello";
+    Mat histogramToMat = Mat(1,50,CV_8UC1,&histogram);
+    histogramsForFaces.push_back(histogramToMat);
+    }
 }
 
 //pass the part of the picture within the bounding box
