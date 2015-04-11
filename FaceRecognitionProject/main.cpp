@@ -32,8 +32,8 @@ int main()
     // put the full address of the Training Images.txt here
     const string trainingfilelistDamien = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damien.txt";
     const string trainingfilelistSteve = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/steve.txt";
-    const string trainingfilelistDan = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/dan.txt"
-    const string trainingfilelistThuyanh = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/thuy-anh.txt"
+    const string trainingfilelistDan = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/dan.txt";
+    const string trainingfilelistThuyanh = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/thuy-anh.txt";
     // put the full address of the Training Images folder here
     const string trainingBaseAddressDamien = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damien";
     const string trainingBaseAddressDan = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/dan";
@@ -41,13 +41,14 @@ int main()
     const string trainingBaseAddressThuyanh = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/thuy-anh";
     // Load the training dataset
     YaleDatasetLoader(pictures, trainingBaseAddressDamien, trainingfilelistDamien);
-    YaleDatasetLoader(pictures, trainingBaseAddressDan, trainingfilelistDan);
     YaleDatasetLoader(pictures, trainingBaseAddressSteve, trainingfilelistSteve);
-    YaleDatasetLoader(picures, trainingfilelistThuyanh, trainingfilelistThuyanh);
+    YaleDatasetLoader(pictures, trainingBaseAddressDan, trainingfilelistDan);
+    YaleDatasetLoader(picures, trainingBaseAddressThuyanh, trainingfilelistThuyanh);
 
     vector<Face_Bounding> images;
     //new_face_bounding(pictures[0],Point2d(117,108),Point2d(441,572));
     //begin damien photos
+    //Close, medium and then far
     Face_Bounding face = {Point2d(117,108),Point2d(441,572),pictures[0]};
     images.push_back(face);
     face = {Point2d(61,122),Point2d(416,609),pictures[1]};
@@ -111,25 +112,73 @@ int main()
     face = {Point2d(239,107),Point2d(372,263),pictures[30]};
     images.push_back(face);
 
+    //begin dan photos
+    face = {Point2d(127,11),Point2d(524,572),pictures[31]};
+    images.push_back(face);
+    face = {Point2d(135,121),Point2d(478,562),pictures[32]};
+    images.push_back(face);
+    face = {Point2d(129,123),Point2d(449,579),pictures[33]};
+    images.push_back(face);
+    face = {Point2d(127,117),Point2d(493,586),pictures[34]};
+    images.push_back(face);
+    face = {Point2d(91,116),Point2d(480,560),pictures[35]};
+    images.push_back(face);
+    face = {Point2d(175,178),Point2d(408,457),pictures[36]};
+    images.push_back(face);
+    face = {Point2d(179,187),Point2d(407,469),pictures[37]};
+    images.push_back(face);
+    face = {Point2d(180,190),Point2d(380,455),pictures[38]};
+    images.push_back(face);
+    face = {Point2d(172,190),Point2d(380,442),pictures[39]};
+    images.push_back(face);
+    face = {Point2d(166,190),Point2d(391,444),pictures[40]};
+    images.push_back(face);
+    face = {Point2d(237,228),Point2d(371,388),pictures[41]};
+    images.push_back(face);
+    face = {Point2d(225,234),Point2d(376,409),pictures[42]};
+    images.push_back(face);
+    face = {Point2d(217,231),Point2d(360,413),pictures[43]};
+    images.push_back(face);
+    face = {Point2d(232,217),Point2d(375,390),pictures[44]};
+    images.push_back(face);
+    face = {Point2d(203,227),Point2d(347,389),pictures[45]};
+    images.push_back(face);
+
+    //begin thuy-anh's photo
+    face = {Point2d(127,11),Point2d(524,572),pictures[31]};
+    images.push_back(face);
+    face = {Point2d(135,121),Point2d(478,562),pictures[32]};
+    images.push_back(face);
+    face = {Point2d(129,123),Point2d(449,579),pictures[33]};
+    images.push_back(face);
+    face = {Point2d(127,117),Point2d(493,586),pictures[34]};
+    images.push_back(face);
+    face = {Point2d(91,116),Point2d(480,560),pictures[35]};
+    images.push_back(face);
+    face = {Point2d(175,178),Point2d(408,457),pictures[36]};
+    images.push_back(face);
+    face = {Point2d(179,187),Point2d(407,469),pictures[37]};
+    images.push_back(face);
+    face = {Point2d(180,190),Point2d(380,455),pictures[38]};
+    images.push_back(face);
+    face = {Point2d(172,190),Point2d(380,442),pictures[39]};
+    images.push_back(face);
+    face = {Point2d(166,190),Point2d(391,444),pictures[40]};
+    images.push_back(face);
+    face = {Point2d(237,228),Point2d(371,388),pictures[41]};
+    images.push_back(face);
+    face = {Point2d(225,234),Point2d(376,409),pictures[42]};
+    images.push_back(face);
+    face = {Point2d(217,231),Point2d(360,413),pictures[43]};
+    images.push_back(face);
+    face = {Point2d(232,217),Point2d(375,390),pictures[44]};
+    images.push_back(face);
+    face = {Point2d(203,227),Point2d(347,389),pictures[45]};
+    images.push_back(face);
+
     //imshow("hello",images[1].image);
     //waitKey(0);
 
-
-    /*
-    // Load Part1 images
-    vector<Mat> Images_part1;
-    for(int i = 0; i < NUM_IMAGES_PART1; i++)
-    {
-        Images_part1.push_back( imread( IMG_NAMES_PART1[i] ) );
-    }
-
-    // Load Part2 images
-    vector<Mat> Images_part2;
-    for(int i = 0; i < NUM_IMAGES_PART2; i++)
-    {
-        Images_part2.push_back( imread( IMG_NAMES_PART2[i] ) );
-    }
-*/
     // Call Part1 function
     Part1(images);
     // Call Part2 function
