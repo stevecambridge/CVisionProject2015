@@ -14,7 +14,7 @@ struct Face_Bounding
     Point2d bottom_right;
     Mat image;
 };
-void Part1(images,histogramsForFaces,centers);
+void Part1 (vector<Face_Bounding> &faces, vector<vector<int>> &histogramsForFaces, Mat &centers);
 Mat RANSACDLT(vector<Point2d> keypoints1, vector<Point2d> keypoints2);
 int* lbp_histogram(Mat img_window);
 int lbp_val(Mat img, int i, int j);
@@ -22,8 +22,10 @@ bool YaleDatasetLoader(vector<Mat> &dataset, const string baseAddress, const str
 Mat lbp_extract(Mat face, int W, int H);
 int nearest_centre(Mat row, Mat centres);
 vector< vector<int> > lbp_cluster(Mat lbp_features, vector<Face_Bounding> faces, Mat centres);
-vector< vector<int> > lbp_main(vector<Face_Bounding> faces);
+vector< vector<int> > lbp_main(vector<Face_Bounding> faces, vector<Face_Bounding> test_faces);
 int nearest_face(vector<int> test_hist, vector< vector<int> > trained_hists);
+bool in_box(Point2d in, Point2d box1, Point2d box2);
+void generateHistograms(vector<Face_Bounding> &faces, Mat &centers, vector<vector<int>> &histogramTestImages);
 
 int main()
 {
@@ -182,18 +184,19 @@ int main()
     //waitKey(0);
 
     // Call Part1 function
-    Mat histogramsForFaces, centers;
+    Mat centers;
+    vector<vector<int>> histogramsForFaces;
     Part1(images,histogramsForFaces,centers);
 
     /* Load the testing images */
     vector<Mat> picturesTest;
     // put the full address of the Training Images.txt here
-    const string trainingfilelistDamienTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damien.txt";
+    //const string trainingfilelistDamienTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damienTest.txt";
     const string trainingfilelistSteveTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/steveTest.txt";
     const string trainingfilelistDanTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/danTest.txt";
     const string trainingfilelistThuyanhTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/thuy-anhTest.txt";
     // put the full address of the Training Images folder here
-    const string trainingBaseAddressDamienTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damienTest";
+    //const string trainingBaseAddressDamienTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damienTest";
     const string trainingBaseAddressDanTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/danTest";
     const string trainingBaseAddressSteveTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/steveTest";
     const string trainingBaseAddressThuyanhTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/thuy-anhTest";
@@ -206,102 +209,147 @@ int main()
 
     vector<Face_Bounding> imagesTest;
     //Steve
-    Face_Bounding faceTest = {"steve",Point2d(122,106),Point2d(511,716),pictures[0]};
+    Face_Bounding faceTest = {"steve",Point2d(122,106),Point2d(511,716),picturesTest[0]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(75,143),Point2d(462,661),pictures[1]};
+    faceTest = {"steve",Point2d(75,143),Point2d(462,661),picturesTest[1]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(138,132),Point2d(452,592),pictures[2]};
+    faceTest = {"steve",Point2d(138,132),Point2d(452,592),picturesTest[2]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(128,144),Point2d(436,604),pictures[3]};
+    faceTest = {"steve",Point2d(128,144),Point2d(436,604),picturesTest[3]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(6,68),Point2d(159,78),pictures[4]};
+    faceTest = {"steve",Point2d(6,68),Point2d(159,78),picturesTest[4]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(159,78),Point2d(569,591),pictures[5]};
+    faceTest = {"steve",Point2d(159,78),Point2d(569,591),picturesTest[5]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(71,81),Point2d(530,650),pictures[6]};
+    faceTest = {"steve",Point2d(71,81),Point2d(530,650),picturesTest[6]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(165,85),Point2d(518,580),pictures[7]};
+    faceTest = {"steve",Point2d(165,85),Point2d(518,580),picturesTest[7]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(111,74),Point2d(455,595),pictures[8]};
+    faceTest = {"steve",Point2d(111,74),Point2d(455,595),picturesTest[8]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(120,46),Point2d(443,515),pictures[9]};
+    faceTest = {"steve",Point2d(120,46),Point2d(443,515),picturesTest[9]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(100,39),Point2d(507,619),pictures[10]};
+    faceTest = {"steve",Point2d(100,39),Point2d(507,619),picturesTest[10]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(60,37),Point2d(426,527),pictures[11]};
+    faceTest = {"steve",Point2d(60,37),Point2d(426,527),picturesTest[11]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(111,56),Point2d(538,611),pictures[12]};
+    faceTest = {"steve",Point2d(111,56),Point2d(538,611),picturesTest[12]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(3,47),Point2d(406,548),pictures[13]};
+    faceTest = {"steve",Point2d(3,47),Point2d(406,548),picturesTest[13]};
     imagesTest.push_back(faceTest);
 
     //Dan pictures
-    faceTest = {"dan",Point2d(86,135),Point2d(492,622),pictures[14]};
+
+    faceTest = {"dan",Point2d(86,135),Point2d(492,622),picturesTest[14]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(118,106),Point2d(520,586),pictures[15]};
+    faceTest = {"dan",Point2d(118,106),Point2d(520,586),picturesTest[15]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(115,144),Point2d(434,566),pictures[16]};
+    faceTest = {"dan",Point2d(115,144),Point2d(434,566),picturesTest[16]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(108,158),Point2d(427,587),pictures[17]};
+    faceTest = {"dan",Point2d(108,158),Point2d(427,587),picturesTest[17]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(95,100),Point2d(509,671),pictures[18]};
+    faceTest = {"dan",Point2d(95,100),Point2d(509,671),picturesTest[18]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(102,142),Point2d(490,660),pictures[19]};
+    faceTest = {"dan",Point2d(102,142),Point2d(490,660),picturesTest[19]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(8,158),Point2d(477,779),pictures[20]};
+    faceTest = {"dan",Point2d(8,158),Point2d(477,779),picturesTest[20]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(30,120),Point2d(540,739),pictures[21]};
+    faceTest = {"dan",Point2d(30,120),Point2d(540,739),picturesTest[21]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(17,161),Point2d(512,757),pictures[22]};
+    faceTest = {"dan",Point2d(17,161),Point2d(512,757),picturesTest[22]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(44,98),Point2d(580,741),pictures[23]};
+    faceTest = {"dan",Point2d(44,98),Point2d(580,741),picturesTest[23]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(57,135),Point2d(520,660),pictures[24]};
+    faceTest = {"dan",Point2d(57,135),Point2d(520,660),picturesTest[24]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(105,156),Point2d(505,625),pictures[25]};
+    faceTest = {"dan",Point2d(105,156),Point2d(505,625),picturesTest[25]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(56,90),Point2d(555,637),pictures[26]};
+    faceTest = {"dan",Point2d(56,90),Point2d(555,637),picturesTest[26]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(156,124),Point2d(576,622),pictures[27]};
+    faceTest = {"dan",Point2d(156,124),Point2d(576,622),picturesTest[27]};
     imagesTest.push_back(faceTest);
 
     //Thuy-Anh
-    faceTest = {"thuy-anh",Point2d(119,93),Point2d(461,615),pictures[28]};
+    faceTest = {"thuy-anh",Point2d(119,93),Point2d(461,615),picturesTest[28]};
     imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh",Point2d(149,191),Point2d(480,631),pictures[29]};
+    faceTest = {"thuy-anh",Point2d(149,191),Point2d(480,631),picturesTest[29]};
     imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh",Point2d(117,194),Point2d(480,565),pictures[30]};
+    faceTest = {"thuy-anh",Point2d(117,194),Point2d(480,565),picturesTest[30]};
     imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh", Point2d(115,190),Point2d(455,643),pictures[31]};
+    faceTest = {"thuy-anh", Point2d(115,190),Point2d(455,643),picturesTest[31]};
     imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh", Point2d(120,100),Point2d(475,550),pictures[32]};
+    faceTest = {"thuy-anh", Point2d(120,100),Point2d(475,550),picturesTest[32]};
     imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh", Point2d(142,116),Point2d(454,574),pictures[33]};
+    faceTest = {"thuy-anh", Point2d(142,116),Point2d(454,574),picturesTest[33]};
     imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh", Point2d(119,132),Point2d(489,577),pictures[34]};
+    faceTest = {"thuy-anh", Point2d(119,132),Point2d(489,577),picturesTest[34]};
     imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh", Point2d(144,148),Point2d(477,554),pictures[35]};
+    faceTest = {"thuy-anh", Point2d(144,148),Point2d(477,554),picturesTest[35]};
     imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh", Point2d(96,138),Point2d(457,584),pictures[36]};
+    faceTest = {"thuy-anh", Point2d(96,138),Point2d(457,584),picturesTest[36]};
     imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh", Point2d(182,124),Point2d(500,527),pictures[37]};
+    faceTest = {"thuy-anh", Point2d(182,124),Point2d(500,527),picturesTest[37]};
     imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh",Point2d(107,114),Point2d(413,548),pictures[38]};
+    faceTest = {"thuy-anh",Point2d(107,114),Point2d(413,548),picturesTest[38]};
     imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh",Point2d(89,139),Point2d(406,548),pictures[39]};
+    faceTest = {"thuy-anh",Point2d(89,139),Point2d(406,548),picturesTest[39]};
     imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh", Point2d(111,120),Point2d(480,600),pictures[40]};
+    faceTest = {"thuy-anh", Point2d(111,120),Point2d(480,600),picturesTest[40]};
     imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh", Point2d(66,118),Point2d(437,556),pictures[41]};
+    faceTest = {"thuy-anh", Point2d(66,118),Point2d(437,556),picturesTest[41]};
     imagesTest.push_back(faceTest);
 
-    Mat histogramTestImages;
+    vector<vector<int>> histogramTestImages;
     generateHistograms(imagesTest,centers,histogramTestImages);
+
+    /*int g;
+    int good = 0;
+    for (g = 0; g < histogramTestImages.rows; g++){
+        string nameTest = imagesTest[g].name;
+        int subject = nearest_centre(histogramTestImages.row(g),histogramsForFaces);
+        string nameResult = images[subject].name;
+        if (nameTest.compare(nameResult) == 0){
+            good = good + 1;
+        }
+    }*/
+
+    double newNorm;
+    double norm = 10000;
+    int x;
+    int i;
+    int index = 0;
+    int good = 0;
+    for(x = 0; x < histogramTestImages.size(); x++){
+        for (i = 0; i < histogramsForFaces.size(); i++){
+            //computes the euclidean distance between the two descriptors
+            vector<int> test = histogramTestImages[x];
+            vector<int> train = histogramsForFaces[i];
+            newNorm = cv::norm(test, train, NORM_L2);
+            //Store the best match with that descriptor
+            if (newNorm < norm){
+               norm = newNorm;
+               index = i;
+            }
+        }
+        //Pushes back the center to which the descriptor is matched. The centers
+        //are in the same order as the descriptors
+        string nameTest = imagesTest[x].name;
+        string nameResult = images[index].name;
+        if (nameTest.compare(nameResult) == 0){
+            good = good + 1;
+        }
+        norm = 10000;
+        index = 0;
+    }
+
+    cout <<  "Good" << to_string(good);
+
+    //lbp_main(images, imagesTest);
 
     return 0;
 }
 
-void generateHistograms(vector<Face_Bounding> &faces, Mat centers, Mat histogramTestImages){
+void generateHistograms(vector<Face_Bounding> &faces, Mat &centers, vector<vector<int>> &histogramTestImages){
 
     int s;
     for (s = 0; s < faces.size(); s++){
@@ -342,15 +390,14 @@ void generateHistograms(vector<Face_Bounding> &faces, Mat centers, Mat histogram
 
     double newNorm;
     double norm = 10000;
-    int histogram[50];
+    int histogram[5];
     int t;
-    for (t=0; t < 50; t++){
+    for (t=0; t < 5; t++){
         histogram[t]=0;
     }
     int center;
     vector< vector<double> > centerOfDescriptors;
     int x;
-    int i;
     for(x = 0; x < extractedDescriptors1.rows; x++){
         for (i = 0; i < centers.rows; i++){
             //computes the euclidean distance between the two descriptors
@@ -369,12 +416,14 @@ void generateHistograms(vector<Face_Bounding> &faces, Mat centers, Mat histogram
         center = 0;
     }
     int p;
-    for (p = 0; p < 50; p++){
+    vector<int> histogramVector;
+    for (p = 0; p < 5; p++){
     cout << histogram[p] << "\n";
+    histogramVector.push_back(histogram[p]);
     }
-    cout << "hello";
-    Mat histogramToMat = Mat(1,50,CV_8UC1,&histogram);
-    histogramTestImages.push_back(histogramToMat);
+    //cout << "hello";
+    //Mat histogramToMat = Mat(1,20,CV_64F,histogram);
+    histogramTestImages.push_back(histogramVector);
     }
 }
 
@@ -443,7 +492,7 @@ bool YaleDatasetLoader(vector<Mat> &dataset, const string baseAddress, const str
     return true;
 }
 
-void Part1 (vector<Face_Bounding> &faces, Mat &histogramsForFaces, Mat &centers) {
+void Part1 (vector<Face_Bounding> &faces, vector<vector<int>> &histogramsForFaces, Mat &centers) {
     Mat descriptors;
     vector<Mat> descriptorsForEach;
 
@@ -486,8 +535,8 @@ void Part1 (vector<Face_Bounding> &faces, Mat &histogramsForFaces, Mat &centers)
     descriptors.push_back(extractedDescriptors1);
     descriptorsForEach.push_back(extractedDescriptors1);
     }
-    Mat centers;
-    kmeans(descriptors, 50, labels,
+    Mat labels;
+    kmeans(descriptors, 5, labels,
                 TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 10, 1.0),
                    3, KMEANS_PP_CENTERS, centers);
 
@@ -497,9 +546,9 @@ void Part1 (vector<Face_Bounding> &faces, Mat &histogramsForFaces, Mat &centers)
     //the closest center
     double newNorm;
     double norm = 10000;
-    int histogram[50];
+    int histogram[5];
     int t;
-    for (t=0; t < 50; t++){
+    for (t=0; t < 5; t++){
         histogram[t]=0;
         //cout << histogram[t] << "\n";
     }
@@ -525,12 +574,20 @@ void Part1 (vector<Face_Bounding> &faces, Mat &histogramsForFaces, Mat &centers)
         center = 0;
     }
     int p;
-    for (p = 0; p < 50; p++){
+    vector<int> histogramVector;
+    for (p = 0; p < 5; p++){
     cout << histogram[p] << "\n";
+    histogramVector.push_back(histogram[p]);
+
     }
-    cout << "hello";
-    Mat histogramToMat = Mat(1,50,CV_8UC1,&histogram);
-    histogramsForFaces.push_back(histogramToMat);
+    //cout << "hello";
+    //Mat histogramToMat = cv::Mat(1,20,CV_8UC3,histogram);
+    //cout << histogramToMat.at<int>(5);
+    //cout << "E = " << endl << " " << histogramToMat << endl << endl;
+    //Mat E = Mat::eye(4, 4, CV_64F);
+    //cout << "E = " << endl << " " << E << endl << endl;
+    //histogramsForFaces.push_back(histogramToMat);
+    histogramsForFaces.push_back(histogramVector);
     }
 }
 
