@@ -18,7 +18,7 @@ Mat RANSACDLT(vector<Point2d> keypoints1, vector<Point2d> keypoints2);
 int* lbp_histogram(Mat img_window);
 int lbp_val(Mat img, int i, int j);
 bool YaleDatasetLoader(vector<Mat> &dataset, const string baseAddress, const string fileList);
-void lbp_extract(Mat face, int W, int H);
+Mat lbp_extract(Mat face, int W, int H);
 
 
 
