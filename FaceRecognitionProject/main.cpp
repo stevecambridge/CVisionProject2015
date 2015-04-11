@@ -18,7 +18,10 @@ Mat RANSACDLT(vector<Point2d> keypoints1, vector<Point2d> keypoints2);
 int* lbp_histogram(Mat img_window);
 int lbp_val(Mat img, int i, int j);
 bool YaleDatasetLoader(vector<Mat> &dataset, const string baseAddress, const string fileList);
-void lbp_extract(Mat face, int W, int H);
+Mat lbp_extract(Mat face, int W, int H);
+int nearest_centre(Mat row, Mat centres);
+void lbp_cluster(Mat lbp_features, vector<Face_Bounding> faces);
+void lbp_main(vector<Face_Bounding> faces);
 
 int main()
 {
@@ -340,6 +343,75 @@ void Part1 (vector<Face_Bounding> &faces) {
     } */
 }
 
+void lbp_main(vector<Face_Bounding> faces)
+{
+    Mat descriptors;
+    for(int i=0; i<faces.size(); i++)
+    {
+        //extract lbp features within the bounding box only and add them to the descriptors matrix
+        Rect bounding_box = Rect(faces[i].top_left, faces[i].bottom_right);
+        descriptors.push_back(lbp_extract(Mat(faces[i].image, bounding_box), 10, 10));
+    }
+
+    //cluster that ish
+    lbp_cluster(descriptors, faces);
+}
+
+
+//should return lbp codebook
+void lbp_cluster(Mat lbp_features, vector<Face_Bounding> faces)
+{
+    //clustering descriptors
+    Mat labels, centres;
+    kmeans(lbp_features, 50, labels,
+                TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 10, 1.0),
+                   3, KMEANS_PP_CENTERS, centres);
+
+    vector< vector<int> > faces_codewords;
+
+    //for each face
+    Mat features;
+    for(int i=0; i<faces.size(); i++)
+    {
+        Rect bounding_box = Rect(faces[i].top_left, faces[i].bottom_right);
+        features = lbp_extract(Mat(faces[i].image, bounding_box), 10, 10);
+
+        //run through and generate a histogram of code words
+        vector<int> codewords;
+        for(int j=0; j<50; j++)
+        {
+            codewords.push_back(0);
+        }
+
+        //for each feature in this face
+        for(int j=0; j<features.rows; j++)
+        {
+            codewords[nearest_centre(features.row(j), centres)] += 1;
+        }
+
+        faces_codewords.push_back(codewords);
+    }
+}
+
+//get the nearest cluster centre, ie. to which cluster does this feature belong
+int nearest_centre(Mat row, Mat centres)
+{
+    int nearest = 0;
+    int dist = norm(row, centres.row(0));
+    int test_dist;
+    //for each cluster centre
+    for(int i=1; i<centres.rows; i++)
+    {
+        test_dist = norm(row, centres.row(i));
+        if(test_dist < dist)
+        {
+            dist = test_dist;
+            nearest = i;
+        }
+    }
+    return nearest;
+}
+
 //pass the part of the picture within the bounding box
 //W and H are the numbers of rows and columns of windows
 //returns the matrix consisting of all extracted lbp features
@@ -361,7 +433,6 @@ Mat lbp_extract(Mat face, int W, int H)
             histogram = lbp_histogram(window);
             lbp_feature_row = Mat(1, 256, CV_8UC1, histogram);
             lbp_features.push_back(lbp_feature_row);
-            //NOT SURE WHAT TO DO WITH THIS BUT HERE IT IS
         }
     }
 
