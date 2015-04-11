@@ -15,7 +15,7 @@ struct Face_Bounding
 void Part1(vector<Face_Bounding> &faces);
 void Part2(vector<Mat> &Images);
 Mat RANSACDLT(vector<Point2d> keypoints1, vector<Point2d> keypoints2);
-vector<int> lbp_histogram(Mat img_window);
+int* lbp_histogram(Mat img_window);
 int lbp_val(Mat img, int i, int j);
 bool YaleDatasetLoader(vector<Mat> &dataset, const string baseAddress, const string fileList);
 void lbp_extract(Mat face, int W, int H);
@@ -43,7 +43,7 @@ int main()
     YaleDatasetLoader(pictures, trainingBaseAddressDamien, trainingfilelistDamien);
     YaleDatasetLoader(pictures, trainingBaseAddressSteve, trainingfilelistSteve);
     YaleDatasetLoader(pictures, trainingBaseAddressDan, trainingfilelistDan);
-    YaleDatasetLoader(picures, trainingBaseAddressThuyanh, trainingfilelistThuyanh);
+    YaleDatasetLoader(pictures, trainingBaseAddressThuyanh, trainingfilelistThuyanh);
 
     vector<Face_Bounding> images;
     //new_face_bounding(pictures[0],Point2d(117,108),Point2d(441,572));
@@ -81,99 +81,99 @@ int main()
     images.push_back(face);
 
     //begin steve photos
-    face = {Point2d(64,146),Point2d(454,659),pictures[16]};
+    face = {Point2d(64,146),Point2d(454,659),pictures[15]};
     images.push_back(face);
-    face = {Point2d(91,167),Point2d(467,684),pictures[17]};
+    face = {Point2d(91,167),Point2d(467,684),pictures[16]};
     images.push_back(face);
-    face = {Point2d(119,141),Point2d(459,650),pictures[18]};
+    face = {Point2d(119,141),Point2d(459,650),pictures[17]};
     images.push_back(face);
-    face = {Point2d(123,137),Point2d(530,639),pictures[19]};
+    face = {Point2d(123,137),Point2d(530,639),pictures[18]};
     images.push_back(face);
-    face = {Point2d(103,132),Point2d(534,668),pictures[20]};
+    face = {Point2d(103,132),Point2d(534,668),pictures[19]};
     images.push_back(face);
-    face = {Point2d(141,246),Point2d(402,558),pictures[21]};
+    face = {Point2d(141,246),Point2d(402,558),pictures[20]};
     images.push_back(face);
-    face = {Point2d(181,234),Point2d(407,539),pictures[22]};
+    face = {Point2d(181,234),Point2d(407,539),pictures[21]};
     images.push_back(face);
-    face = {Point2d(189,226),Point2d(423,531),pictures[23]};
+    face = {Point2d(189,226),Point2d(423,531),pictures[22]};
     images.push_back(face);
-    face = {Point2d(190,220),Point2d(450,530),pictures[24]};
+    face = {Point2d(190,220),Point2d(450,530),pictures[23]};
     images.push_back(face);
-    face = {Point2d(185,193),Point2d(463,528),pictures[25]};
+    face = {Point2d(185,193),Point2d(463,528),pictures[24]};
     images.push_back(face);
-    face = {Point2d(240,103),Point2d(356,262),pictures[26]};
+    face = {Point2d(240,103),Point2d(356,262),pictures[25]};
     images.push_back(face);
-    face = {Point2d(235,96),Point2d(353,278),pictures[27]};
+    face = {Point2d(235,96),Point2d(353,278),pictures[26]};
     images.push_back(face);
-    face = {Point2d(251,98),Point2d(367,250),pictures[28]};
+    face = {Point2d(251,98),Point2d(367,250),pictures[27]};
     images.push_back(face);
-    face = {Point2d(242,100),Point2d(366,266),pictures[29]};
+    face = {Point2d(242,100),Point2d(366,266),pictures[28]};
     images.push_back(face);
-    face = {Point2d(239,107),Point2d(372,263),pictures[30]};
+    face = {Point2d(239,107),Point2d(372,263),pictures[29]};
     images.push_back(face);
 
     //begin dan photos
-    face = {Point2d(127,11),Point2d(524,572),pictures[31]};
+    face = {Point2d(127,11),Point2d(524,572),pictures[30]};
     images.push_back(face);
-    face = {Point2d(135,121),Point2d(478,562),pictures[32]};
+    face = {Point2d(135,121),Point2d(478,562),pictures[31]};
     images.push_back(face);
-    face = {Point2d(129,123),Point2d(449,579),pictures[33]};
+    face = {Point2d(129,123),Point2d(449,579),pictures[32]};
     images.push_back(face);
-    face = {Point2d(127,117),Point2d(493,586),pictures[34]};
+    face = {Point2d(127,117),Point2d(493,586),pictures[33]};
     images.push_back(face);
-    face = {Point2d(91,116),Point2d(480,560),pictures[35]};
+    face = {Point2d(91,116),Point2d(480,560),pictures[34]};
     images.push_back(face);
-    face = {Point2d(175,178),Point2d(408,457),pictures[36]};
+    face = {Point2d(175,178),Point2d(408,457),pictures[35]};
     images.push_back(face);
-    face = {Point2d(179,187),Point2d(407,469),pictures[37]};
+    face = {Point2d(179,187),Point2d(407,469),pictures[36]};
     images.push_back(face);
-    face = {Point2d(180,190),Point2d(380,455),pictures[38]};
+    face = {Point2d(180,190),Point2d(380,455),pictures[37]};
     images.push_back(face);
-    face = {Point2d(172,190),Point2d(380,442),pictures[39]};
+    face = {Point2d(172,190),Point2d(380,442),pictures[38]};
     images.push_back(face);
-    face = {Point2d(166,190),Point2d(391,444),pictures[40]};
+    face = {Point2d(166,190),Point2d(391,444),pictures[39]};
     images.push_back(face);
-    face = {Point2d(237,228),Point2d(371,388),pictures[41]};
+    face = {Point2d(237,228),Point2d(371,388),pictures[40]};
     images.push_back(face);
-    face = {Point2d(225,234),Point2d(376,409),pictures[42]};
+    face = {Point2d(225,234),Point2d(376,409),pictures[41]};
     images.push_back(face);
-    face = {Point2d(217,231),Point2d(360,413),pictures[43]};
+    face = {Point2d(217,231),Point2d(360,413),pictures[42]};
     images.push_back(face);
-    face = {Point2d(232,217),Point2d(375,390),pictures[44]};
+    face = {Point2d(232,217),Point2d(375,390),pictures[43]};
     images.push_back(face);
-    face = {Point2d(203,227),Point2d(347,389),pictures[45]};
+    face = {Point2d(203,227),Point2d(347,389),pictures[44]};
     images.push_back(face);
 
     //begin thuy-anh's photo
-    face = {Point2d(127,11),Point2d(524,572),pictures[31]};
+    face = {Point2d(127,11),Point2d(524,572),pictures[45]};
     images.push_back(face);
-    face = {Point2d(135,121),Point2d(478,562),pictures[32]};
+    face = {Point2d(135,121),Point2d(478,562),pictures[46]};
     images.push_back(face);
-    face = {Point2d(129,123),Point2d(449,579),pictures[33]};
+    face = {Point2d(129,123),Point2d(449,579),pictures[47]};
     images.push_back(face);
-    face = {Point2d(127,117),Point2d(493,586),pictures[34]};
+    face = {Point2d(127,117),Point2d(493,586),pictures[48]};
     images.push_back(face);
-    face = {Point2d(91,116),Point2d(480,560),pictures[35]};
+    face = {Point2d(91,116),Point2d(480,560),pictures[49]};
     images.push_back(face);
-    face = {Point2d(175,178),Point2d(408,457),pictures[36]};
+    face = {Point2d(175,178),Point2d(408,457),pictures[50]};
     images.push_back(face);
-    face = {Point2d(179,187),Point2d(407,469),pictures[37]};
+    face = {Point2d(179,187),Point2d(407,469),pictures[51]};
     images.push_back(face);
-    face = {Point2d(180,190),Point2d(380,455),pictures[38]};
+    face = {Point2d(180,190),Point2d(380,455),pictures[52]};
     images.push_back(face);
-    face = {Point2d(172,190),Point2d(380,442),pictures[39]};
+    face = {Point2d(172,190),Point2d(380,442),pictures[53]};
     images.push_back(face);
-    face = {Point2d(166,190),Point2d(391,444),pictures[40]};
+    face = {Point2d(166,190),Point2d(391,444),pictures[54]};
     images.push_back(face);
-    face = {Point2d(237,228),Point2d(371,388),pictures[41]};
+    face = {Point2d(237,228),Point2d(371,388),pictures[55]};
     images.push_back(face);
-    face = {Point2d(225,234),Point2d(376,409),pictures[42]};
+    face = {Point2d(225,234),Point2d(376,409),pictures[56]};
     images.push_back(face);
-    face = {Point2d(217,231),Point2d(360,413),pictures[43]};
+    face = {Point2d(217,231),Point2d(360,413),pictures[57]};
     images.push_back(face);
-    face = {Point2d(232,217),Point2d(375,390),pictures[44]};
+    face = {Point2d(232,217),Point2d(375,390),pictures[58]};
     images.push_back(face);
-    face = {Point2d(203,227),Point2d(347,389),pictures[45]};
+    face = {Point2d(203,227),Point2d(347,389),pictures[59]};
     images.push_back(face);
 
     //imshow("hello",images[1].image);
@@ -341,12 +341,15 @@ void Part1 (vector<Face_Bounding> &faces) {
 
 //pass the part of the picture within the bounding box
 //W and H are the numbers of rows and columns of windows
-void lbp_extract(Mat face, int W, int H)
+//returns the matrix consisting of all extracted lbp features
+Mat lbp_extract(Mat face, int W, int H)
 {
     Mat window;
     int row_height = window.rows / (double)W;
     int col_width = window.cols / (double)H;
-    vector<int> histogram;
+    int *histogram;
+    Mat lbp_feature_row;
+    Mat lbp_features;
 
     //loop over image and perform lbp junk on each window of face
     for(int i=0; i<W; i++)
@@ -355,19 +358,22 @@ void lbp_extract(Mat face, int W, int H)
         {
             window = Mat(face, Rect(j*col_width, i*row_height, col_width, row_height));
             histogram = lbp_histogram(window);
-
+            lbp_feature_row = Mat(1, 256, CV_8UC1, histogram);
+            lbp_features.push_back(lbp_feature_row);
             //NOT SURE WHAT TO DO WITH THIS BUT HERE IT IS
         }
     }
+
+    return lbp_features;
 }
 
 //returns the histogram of lbp descriptors, given one of the W x H windows of the image
-vector<int> lbp_histogram(Mat img_window)
+int* lbp_histogram(Mat img_window)
 {
     //initialize histogram
-    vector<int> hist;
+    int *hist = new int[256];
     for(int i=0; i<256; i++)
-        hist.push_back(0);
+        hist[i] = 0;
 
     cvtColor(img_window, img_window, CV_RGB2GRAY);
     for(int i=0; i<img_window.rows; i++)
