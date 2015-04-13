@@ -302,6 +302,36 @@ int main()
     faceTest = {"thuy-anh", Point2d(66,118),Point2d(437,556),picturesTest[41]};
     imagesTest.push_back(faceTest);
 
+    //Damien
+    faceTest = {"damien",Point2d(122,138),Point2d(451,628),picturesTest[42]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"damien",Point2d(154,136),Point2d(428,580),picturesTest[43]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"damien",Point2d(68,145),Point2d(481,686),picturesTest[44]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"damien", Point2d(142,134),Point2d(491,586),picturesTest[45]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"damien", Point2d(305,106),Point2d(531,703),picturesTest[46]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"damien", Point2d(95,112),Point2d(554,652),picturesTest[47]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"damien", Point2d(80,131),Point2d(505,721),picturesTest[48]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"damien", Point2d(52,74),Point2d(425,638),picturesTest[49]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"damien", Point2d(72,133),Point2d(474,681),picturesTest[50]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"damien", Point2d(17,109),Point2d(409,611),picturesTest[51]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"damien",Point2d(158,142),Point2d(449,565),picturesTest[52]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"damien",Point2d(159,123),Point2d(472,606),picturesTest[53]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"damien", Point2d(125,125),Point2d(475,570),picturesTest[54]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"damien", Point2d(133,153),Point2d(449,608),picturesTest[55]};
+    imagesTest.push_back(faceTest);
+
     lbp_main(images, imagesTest);
     exit(0);
 
@@ -811,4 +841,3 @@ int lbp_val(Mat img, int i, int j)
 
 
 //determines if the first point is within the box defined by the second two points
-
