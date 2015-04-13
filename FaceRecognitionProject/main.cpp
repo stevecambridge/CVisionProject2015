@@ -186,9 +186,9 @@ int main()
     //waitKey(0);
 
     // Call Part1 function
-    Mat centers;
-    vector<vector<int>> histogramsForFaces;
-    Part1(images,histogramsForFaces,centers);
+    // Mat centers;
+    // vector<vector<int>> histogramsForFaces;
+    // Part1(images,histogramsForFaces,centers); uncomment
 
     /* Load the testing images */
     vector<Mat> picturesTest;
@@ -303,35 +303,36 @@ int main()
     imagesTest.push_back(faceTest);
 
     //Damien
-    faceTest = {"damien",Point2d(122,138),Point2d(451,628),picturesTest[42]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"damien",Point2d(154,136),Point2d(428,580),picturesTest[43]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"damien",Point2d(68,145),Point2d(481,686),picturesTest[44]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"damien", Point2d(142,134),Point2d(491,586),picturesTest[45]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"damien", Point2d(305,106),Point2d(531,703),picturesTest[46]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"damien", Point2d(95,112),Point2d(554,652),picturesTest[47]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"damien", Point2d(80,131),Point2d(505,721),picturesTest[48]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"damien", Point2d(52,74),Point2d(425,638),picturesTest[49]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"damien", Point2d(72,133),Point2d(474,681),picturesTest[50]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"damien", Point2d(17,109),Point2d(409,611),picturesTest[51]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"damien",Point2d(158,142),Point2d(449,565),picturesTest[52]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"damien",Point2d(159,123),Point2d(472,606),picturesTest[53]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"damien", Point2d(125,125),Point2d(475,570),picturesTest[54]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"damien", Point2d(133,153),Point2d(449,608),picturesTest[55]};
-    imagesTest.push_back(faceTest);
+    // faceTest = {"damien",Point2d(122,138),Point2d(451,628),picturesTest[42]};
+    // imagesTest.push_back(faceTest);
+    // faceTest = {"damien",Point2d(154,136),Point2d(428,580),picturesTest[43]};
+    // imagesTest.push_back(faceTest);
+    // faceTest = {"damien",Point2d(68,145),Point2d(481,686),picturesTest[44]};
+    // imagesTest.push_back(faceTest);
+    // faceTest = {"damien", Point2d(142,134),Point2d(491,586),picturesTest[45]};
+    // imagesTest.push_back(faceTest);
+    // faceTest = {"damien", Point2d(305,106),Point2d(531,703),picturesTest[46]};
+    // imagesTest.push_back(faceTest);
+    // faceTest = {"damien", Point2d(95,112),Point2d(554,652),picturesTest[47]};
+    // imagesTest.push_back(faceTest);
+    // faceTest = {"damien", Point2d(80,131),Point2d(505,721),picturesTest[48]};
+    // imagesTest.push_back(faceTest);
+    // faceTest = {"damien", Point2d(52,74),Point2d(425,638),picturesTest[49]};
+    // imagesTest.push_back(faceTest);
+    // faceTest = {"damien", Point2d(72,133),Point2d(474,681),picturesTest[50]};
+    // imagesTest.push_back(faceTest);
+    // faceTest = {"damien", Point2d(17,109),Point2d(409,611),picturesTest[51]};
+    // imagesTest.push_back(faceTest);
+    // faceTest = {"damien",Point2d(158,142),Point2d(449,565),picturesTest[52]};
+    // imagesTest.push_back(faceTest);
+    // faceTest = {"damien",Point2d(159,123),Point2d(472,606),picturesTest[53]};
+    // imagesTest.push_back(faceTest);
+    // faceTest = {"damien", Point2d(125,125),Point2d(475,570),picturesTest[54]};
+    // imagesTest.push_back(faceTest);
+    // faceTest = {"damien", Point2d(133,153),Point2d(449,608),picturesTest[55]};
+    // imagesTest.push_back(faceTest);
 
+    cout << "entering lbp main" << endl;
     lbp_main(images, imagesTest);
     exit(0);
 
@@ -700,9 +701,12 @@ vector< vector<int> > lbp_main(vector<Face_Bounding> faces, vector<Face_Bounding
     //cluster that ish
     Mat labels, centres;
     descriptors.convertTo(descriptors, CV_32F);
+    cout << "here?" << endl;
     kmeans(descriptors, 50, labels,
                 TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 10, 1.0),
                    3, KMEANS_PP_CENTERS, centres);
+
+    cout << "got this far" << endl;
 
     vector< vector<int> > faces_as_codewords = lbp_cluster(descriptors, faces, centres);
 
@@ -778,26 +782,31 @@ int nearest_centre(Mat row, Mat centres)
 Mat lbp_extract(Mat face, int W, int H)
 {
     Mat window;
-    int row_height = window.rows / (double)W;
-    int col_width = window.cols / (double)H;
+    int row_height = face.rows / (double)W;
+    int col_width = face.cols / (double)H;
     vector<int> histogram;
     Mat lbp_feature_row;
     Mat lbp_features = Mat(1, 256, CV_32F, 1);
+    Point2d left;
+    Point2d right;
 
+    cout << "before loop" << endl;
     //loop over image and perform lbp junk on each window of face
     for(int i=0; i<W; i++)
     {
         for(int j=0; j<H; j++)
         {
-            Point2d left = Point2d(j*col_width, i*row_height);
-            Point2d right= Point2d(j*col_width+col_width, i*row_height+row_height);
+            left = Point2d(j*col_width, i*row_height);
+            right= Point2d(j*col_width+col_width, i*row_height+row_height);
             window = Mat(face, Rect(left, right));
             histogram = lbp_histogram(window);
-            lbp_feature_row = Mat(1, 256, CV_32F, &histogram);
-            // lbp_features.push_back(lbp_feature_row);
+            lbp_feature_row = Mat(1, 256, CV_32F, 1);
+            for(int k=0; k<256; k++)
+                lbp_feature_row.at<double>(0,k) = histogram[k];
             vconcat(lbp_features, lbp_feature_row, lbp_features);
         }
     }
+    cout << "done extract loop" << endl;
     lbp_features = Mat(lbp_features, Rect(0,1,lbp_features.cols, lbp_features.rows-1));
 
     return lbp_features;
@@ -818,6 +827,7 @@ vector<int> lbp_histogram(Mat img_window)
         {
             //ignoring border pixels cos lbp would get weird
             if(i!=0 && j!=0 && i!=img_window.rows-1 && j!= img_window.cols-1)
+
                 hist[lbp_val(img_window, i, j)] += 1;
         }
     }
@@ -837,6 +847,7 @@ int lbp_val(Mat img, int i, int j)
     out += (img.at<double>(i+1, j-1) < center)*32;
     out += (img.at<double>(i, j-1) < center)*64;
     out += (img.at<double>(i-1, j-1) < center)*128;
+    return out;
 }
 
 
