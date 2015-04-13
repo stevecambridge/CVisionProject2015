@@ -10,6 +10,7 @@ using namespace std;
 struct Face_Bounding
 {
     string name;
+    string pose;
     Point2d top_left;
     Point2d bottom_right;
     Mat image;
