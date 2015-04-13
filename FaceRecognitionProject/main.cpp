@@ -17,7 +17,7 @@ struct Face_Bounding
 void Part1 (vector<Face_Bounding> &faces, vector<vector<int>> &histogramsForFaces, Mat &centers);
 Mat RANSACDLT(vector<Point2d> keypoints1, vector<Point2d> keypoints2);
 void generateHistograms(vector<Face_Bounding> &faces, Mat centers, Mat histogramTestImages);
-int* lbp_histogram(Mat img_window);
+vector<int> lbp_histogram(Mat img_window);
 int lbp_val(Mat img, int i, int j);
 bool YaleDatasetLoader(vector<Mat> &dataset, const string baseAddress, const string fileList);
 Mat lbp_extract(Mat face, int W, int H);
@@ -302,6 +302,9 @@ int main()
     faceTest = {"thuy-anh", Point2d(66,118),Point2d(437,556),picturesTest[41]};
     imagesTest.push_back(faceTest);
 
+    lbp_main(images, imagesTest);
+    exit(0);
+
     vector<vector<int>> histogramTestImages;
     generateHistograms(imagesTest,centers,histogramTestImages);
 
@@ -353,7 +356,7 @@ int main()
 
     cout <<  "Good" << to_string(good);
 
-    //lbp_main(images, imagesTest);
+    // lbp_main(images, imagesTest);
 
     return 0;
 }
@@ -623,15 +626,17 @@ void lbp_recognition_results(vector<Face_Bounding> test_faces, vector<Face_Bound
         {
             codewords[nearest_centre(features.row(j), centres)] += 1;
         }
+
         //codewords contains the test image's representation as a collection of code words
         //find nearest vector in faces_as_codewords, which is the representation of the training images
         int matched_face = nearest_face(codewords, faces_as_codewords);
+        cout << test_faces[i].name << " " << faces[matched_face].name << " " << matched_face << endl;
         if(test_faces[i].name.compare(faces[matched_face].name) != 0)
         {
             errors += 1;
         }
     }
-    cout << "errors:" << errors << endl;
+    cout << "errors: " << errors << endl;
 }
 
 int nearest_face(vector<int> test_hist, vector< vector<int> > trained_hists)
@@ -659,10 +664,16 @@ vector< vector<int> > lbp_main(vector<Face_Bounding> faces, vector<Face_Bounding
         //extract lbp features within the bounding box only and add them to the descriptors matrix
         Rect bounding_box = Rect(faces[i].top_left, faces[i].bottom_right);
         descriptors.push_back(lbp_extract(Mat(faces[i].image, bounding_box), 10, 10));
+        // vconcat(descriptors, lbp_extract(Mat(faces[i].image, bounding_box), 10, 10), descriptors);
     }
 
     //cluster that ish
-    Mat centres;
+    Mat labels, centres;
+    descriptors.convertTo(descriptors, CV_32F);
+    kmeans(descriptors, 50, labels,
+                TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 10, 1.0),
+                   3, KMEANS_PP_CENTERS, centres);
+
     vector< vector<int> > faces_as_codewords = lbp_cluster(descriptors, faces, centres);
 
     lbp_recognition_results(test_faces, faces, centres, faces_as_codewords);
@@ -675,12 +686,12 @@ vector< vector<int> > lbp_main(vector<Face_Bounding> faces, vector<Face_Bounding
 //this is each image's representation as a histogram of code words
 vector< vector<int> > lbp_cluster(Mat lbp_features, vector<Face_Bounding> faces, Mat centres)
 {
-    //clustering descriptors
-    Mat labels;
-    lbp_features.convertTo(lbp_features, CV_32F);
-    kmeans(lbp_features, 50, labels,
-                TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 10, 1.0),
-                   3, KMEANS_PP_CENTERS, centres);
+    // //clustering descriptors
+    // Mat labels;
+    // lbp_features.convertTo(lbp_features, CV_32F);
+    // kmeans(lbp_features, 50, labels,
+    //             TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 10, 1.0),
+    //                3, KMEANS_PP_CENTERS, centres);
 
     vector< vector<int> > faces_codewords;
 
@@ -739,9 +750,9 @@ Mat lbp_extract(Mat face, int W, int H)
     Mat window;
     int row_height = window.rows / (double)W;
     int col_width = window.cols / (double)H;
-    int *histogram;
+    vector<int> histogram;
     Mat lbp_feature_row;
-    Mat lbp_features;
+    Mat lbp_features = Mat(1, 256, CV_32F, 1);
 
     //loop over image and perform lbp junk on each window of face
     for(int i=0; i<W; i++)
@@ -752,21 +763,23 @@ Mat lbp_extract(Mat face, int W, int H)
             Point2d right= Point2d(j*col_width+col_width, i*row_height+row_height);
             window = Mat(face, Rect(left, right));
             histogram = lbp_histogram(window);
-            lbp_feature_row = Mat(1, 256, CV_32F, histogram);
-            lbp_features.push_back(lbp_feature_row);
+            lbp_feature_row = Mat(1, 256, CV_32F, &histogram);
+            // lbp_features.push_back(lbp_feature_row);
+            vconcat(lbp_features, lbp_feature_row, lbp_features);
         }
     }
+    lbp_features = Mat(lbp_features, Rect(0,1,lbp_features.cols, lbp_features.rows-1));
 
     return lbp_features;
 }
 
 //returns the histogram of lbp descriptors, given one of the W x H windows of the image
-int* lbp_histogram(Mat img_window)
+vector<int> lbp_histogram(Mat img_window)
 {
     //initialize histogram
-    int *hist = new int[256];
+    vector<int> hist;
     for(int i=0; i<256; i++)
-        hist[i] = 0;
+        hist.push_back(0);
 
     cvtColor(img_window, img_window, CV_RGB2GRAY);
     for(int i=0; i<img_window.rows; i++)
