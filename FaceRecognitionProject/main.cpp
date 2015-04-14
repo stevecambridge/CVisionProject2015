@@ -186,9 +186,6 @@ int main()
       face = {"thuy-anh", "-45", Point2d(203,227),Point2d(347,389),pictures[59]};
       images.push_back(face);
 
-    //imshow("hello",images[1].image);
-    //waitKey(0);
-
     // Call Part1 function
     Mat centers;
     vector<vector<int>> histogramsForFaces;
@@ -344,22 +341,8 @@ int main()
     vector<vector<int>> histogramTestImages;
     generateHistograms(imagesTest,centers,histogramTestImages);
 
-    // Mat histogramTestImages;
-    // generateHistograms(imagesTest,centers,histogramTestImages);
-
     //lbp_main(images, imagesTest);
 
-
-    /*int g;
-    int good = 0;
-    for (g = 0; g < histogramTestImages.rows; g++){
-        string nameTest = imagesTest[g].name;
-        int subject = nearest_centre(histogramTestImages.row(g),histogramsForFaces);
-        string nameResult = images[subject].name;
-        if (nameTest.compare(nameResult) == 0){
-            good = good + 1;
-        }
-    }*/
     //0 is -45, 1 is -30, 2 is 0,3 is 30, 4 is 45
     //rows represent training images and columns testing
     Mat confusionMatrixSteve = Mat::zeros(5, 5, CV_64F);
@@ -526,8 +509,8 @@ void generateHistograms(vector<Face_Bounding> &faces, Mat &centers, vector<vecto
 
     Mat outputImageSIFT;
     drawKeypoints(image1, keyPointsInBox, outputImageSIFT,Scalar::all(-1), DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-    //imshow("Hello",outputImageSIFT);
-    //waitKey(0);
+    imshow("Hello",outputImageSIFT);
+    waitKey(0);
 
     Mat extractedDescriptors1;
     //stores the SIFT descriptors for the first and second image
@@ -671,8 +654,6 @@ void Part1 (vector<Face_Bounding> &faces, vector<vector<int>> &histogramsForFace
 
     Mat outputImageSIFT;
     drawKeypoints(image1, keyPointsInBox, outputImageSIFT,Scalar::all(-1), DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-    //imshow("Hello",outputImageSIFT);
-    //waitKey(0);
 
     Mat extractedDescriptors1;
     //stores the SIFT descriptors for the first and second image
