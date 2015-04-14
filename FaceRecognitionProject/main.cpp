@@ -4,6 +4,11 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <stdio.h>
+#include "opencv2/objdetect/objdetect.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+
 using namespace cv;
 using namespace std;
 // Functions prototypes
@@ -28,6 +33,9 @@ vector< vector<int> > lbp_main(vector<Face_Bounding> faces, vector<Face_Bounding
 int nearest_face(vector<int> test_hist, vector< vector<int> > trained_hists);
 bool in_box(Point2d in, Point2d box1, Point2d box2);
 void generateHistograms(vector<Face_Bounding> &faces, Mat &centers, vector<vector<int>> &histogramTestImages);
+vector< vector<Point> > detectAndDisplay(Mat frame, CascadeClassifier face_cascade);
+vector< vector<Point> > face_detect_main(Mat frame);
+void face_tagging_results(Mat group, vector< vector<Point> > tagged_faces, vector<Face_Bounding> faces, Mat centres, vector< vector<int> > faces_as_codewords);
 
 int main()
 {
@@ -186,9 +194,9 @@ int main()
     //waitKey(0);
 
     // Call Part1 function
-    // Mat centers;
-    // vector<vector<int>> histogramsForFaces;
-    // Part1(images,histogramsForFaces,centers); uncomment
+    Mat centers;
+    vector<vector<int>> histogramsForFaces;
+    Part1(images,histogramsForFaces,centers);
 
     /* Load the testing images */
     vector<Mat> picturesTest;
@@ -336,10 +344,9 @@ int main()
 
     cout << "entering lbp main" << endl;
     lbp_main(images, imagesTest);
-    exit(0);
 
-    // vector<vector<int>> histogramTestImages;
-    // generateHistograms(imagesTest,centers,histogramTestImages); uncomment
+    vector<vector<int>> histogramTestImages;
+    generateHistograms(imagesTest,centers,histogramTestImages);
 
     // Mat histogramTestImages;
     // generateHistograms(imagesTest,centers,histogramTestImages);
@@ -358,38 +365,36 @@ int main()
         }
     }*/
 
-    // double newNorm;
-    // double norm = 10000;
-    // int x;
-    // int i;
-    // int index = 0;
-    // int good = 0;
-    // for(x = 0; x < histogramTestImages.size(); x++){
-    //     for (i = 0; i < histogramsForFaces.size(); i++){
-    //         //computes the euclidean distance between the two descriptors
-    //         vector<int> test = histogramTestImages[x];
-    //         vector<int> train = histogramsForFaces[i];
-    //         newNorm = cv::norm(test, train, NORM_L2);
-    //         //Store the best match with that descriptor
-    //         if (newNorm < norm){
-    //            norm = newNorm;
-    //            index = i;
-    //         }
-    //     }
-    //     //Pushes back the center to which the descriptor is matched. The centers
-    //     //are in the same order as the descriptors
-    //     string nameTest = imagesTest[x].name;
-    //     string nameResult = images[index].name;
-    //     if (nameTest.compare(nameResult) == 0){
-    //         good = good + 1;
-    //     }
-    //     norm = 10000;
-    //     index = 0;
-    // }  uncomment
+    double newNorm;
+    double norm = 10000;
+    int x;
+    int i;
+    int index = 0;
+    int good = 0;
+    for(x = 0; x < histogramTestImages.size(); x++){
+        for (i = 0; i < histogramsForFaces.size(); i++){
+            //computes the euclidean distance between the two descriptors
+            vector<int> test = histogramTestImages[x];
+            vector<int> train = histogramsForFaces[i];
+            newNorm = cv::norm(test, train, NORM_L2);
+            //Store the best match with that descriptor
+            if (newNorm < norm){
+               norm = newNorm;
+               index = i;
+            }
+        }
+        //Pushes back the center to which the descriptor is matched. The centers
+        //are in the same order as the descriptors
+        string nameTest = imagesTest[x].name;
+        string nameResult = images[index].name;
+        if (nameTest.compare(nameResult) == 0){
+            good = good + 1;
+        }
+        norm = 10000;
+        index = 0;
+    }
 
-    // cout <<  "Good" << to_string(good); uncomment
-
-    // lbp_main(images, imagesTest);
+    cout <<  "Good" << to_string(good);
 
     return 0;
 }
@@ -714,7 +719,53 @@ vector< vector<int> > lbp_main(vector<Face_Bounding> faces, vector<Face_Bounding
 
     lbp_recognition_results(test_faces, faces, centres, faces_as_codewords);
 
+    Mat group_shot = imread("group.JPG", CV_LOAD_IMAGE_UNCHANGED);
+    vector< vector<Point> > tagged_faces = face_detect_main(group_shot);
+    face_tagging_results(group_shot, tagged_faces, faces, centres, faces_as_codewords);
+
     return faces_as_codewords;
+}
+
+void face_tagging_results(Mat group, vector< vector<Point> > tagged_faces, vector<Face_Bounding> faces, Mat centres, vector< vector<int> > faces_as_codewords)
+{
+    Mat tagged_face;
+    Mat features;
+    Mat output = imread("group.JPG");
+    // group.copyTo(output);
+    //for each face
+    for(int i=0; i<tagged_faces.size(); i++)
+    {
+        //extract the actual face first
+        tagged_face = Mat(group, Rect(tagged_faces[i][0], tagged_faces[i][1]));
+
+        //normalize it
+        normalize(tagged_face, tagged_face, 0, 255, CV_MINMAX, CV_32F);
+
+        //extract them features
+        features = lbp_extract(tagged_face, 10, 10);
+
+        //run through and generate a histogram of code words
+        vector<int> codewords;
+        for(int j=0; j<50; j++)
+        {
+            codewords.push_back(0);
+        }
+
+        //for each feature in this face
+        for(int j=0; j<features.rows; j++)
+        {
+            codewords[nearest_centre(features.row(j), centres)] += 1;
+        }
+
+        //id and then name of matched face 
+        int matched_face = nearest_face(codewords, faces_as_codewords);
+        string name = faces[matched_face].name;
+
+        //write the name on the picture
+        putText(output, name, tagged_faces[i][0], FONT_HERSHEY_PLAIN, 12, Scalar(0,255,255));
+    }
+    cout << output << endl;
+    waitKey(0);
 }
 
 
@@ -854,5 +905,70 @@ int lbp_val(Mat img, int i, int j)
     return out;
 }
 
+vector< vector<Point> > face_detect_main(Mat frame)
+{
+    //to find where your module is, type "locate haarcascade_frontalface_alt.xml in your cmd line "
+    string face_cascade_name = "/usr/local/share/OpenCV/haarcascades/haarcascade_frontalface_alt.xml";
+    CascadeClassifier face_cascade;  
+    vector < vector<Point> > faceDetectionVector;
 
-//determines if the first point is within the box defined by the second two points
+    // Load the cascade
+    if (!face_cascade.load(face_cascade_name))
+    {
+        printf("Couldn't load face cascade module\n");
+        exit(-1);
+    };
+
+    // Read the image file
+    // Mat frame = imread("group.JPG");
+    //Mat frame = imread("lenna.png");
+
+    if (!frame.empty())
+    {
+        faceDetectionVector = detectAndDisplay(frame, face_cascade); //the magic happens here : detects faces from a pic
+        waitKey(0);
+    }
+    else
+        printf("Are you sure you have the correct filename?\n");
+
+    // cout << faceDetectionVector.size() << endl;
+    return faceDetectionVector;
+}
+
+// detecs faces and displays them in the picture
+vector < vector<Point> > detectAndDisplay(Mat frame, CascadeClassifier face_cascade)
+{
+    std::vector<Rect> faces;
+    Mat frame_gray;
+    Mat crop;
+    Mat res;
+    Mat gray;
+    vector<Point> faceCoords;
+    vector < vector<Point> > faceVector;
+
+    cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
+    equalizeHist(frame_gray, frame_gray);
+
+    // Detect faces
+    face_cascade.detectMultiScale(frame_gray, faces, 1.1, 2, 0 | CASCADE_SCALE_IMAGE, Size(30, 30));
+
+    size_t ic = 0; // ic is index of current element
+
+    for (ic = 0; ic < faces.size(); ic++) // Iterate through all current elements (detected faces)
+    {
+        Point pt1(faces[ic].x, faces[ic].y); // Display detected faces on main window - live stream from camera
+        faceCoords.push_back(pt1);
+        Point pt2((faces[ic].x + faces[ic].height), (faces[ic].y + faces[ic].width));
+        faceCoords.push_back(pt2);
+        rectangle(frame, pt1, pt2, Scalar(0, 255, 0), 2, 8, 0);
+
+        faceVector.push_back(faceCoords);
+        faceCoords.clear();
+    }
+
+    // imshow("original", frame);
+
+    return faceVector;
+    //return coords;
+
+}
