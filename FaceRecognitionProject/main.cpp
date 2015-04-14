@@ -32,6 +32,7 @@ void generateHistograms(vector<Face_Bounding> &faces, Mat &centers, vector<vecto
 void insertInConfusionMatrix(string poseTest, string poseResult, Mat &confusionMatrix);
 void faceTagging();
 void detectAndDisplay(Mat frame);
+void normalizeMatrices(Mat confusionMatrixDamien, Mat confusionMatrixDan, Mat confusionMatrixSteve, Mat confusionMatrixTA);
 
 int main()
 {
@@ -390,36 +391,91 @@ int main()
     }
 
     cout <<  "Good" << to_string(good);
-
-    cout << "Damien\n";
-    Mat confusionNormalized;
-    //normalize(confusionMatrixDamien,confusionNormalized,0,1,CV_MINMAX,CV_64F);
-    int g, h;
-    for (g = 0; g < 5; g++){
-        for (h = 0; h < 5; h++){
-            cout << confusionMatrixDamien.at<int>(g,h) << "\n";
-        }
-    }
-    cout << "Steve" << "\n";
-   for (g = 0; g < 5; g++){
-        for (h = 0; h < 5; h++){
-            cout << confusionMatrixSteve.at<int>(g,h) << "\n";
-        }
-    }
-    cout << "Dan" << "\n";
-    for (g = 0; g < 5; g++){
-        for (h = 0; h < 5; h++){
-            cout << confusionMatrixDan.at<int>(g,h) << "\n";
-        }
-    }
-    cout << "TA" << "\n";
-    for (g = 0; g < 5; g++){
-        for (h = 0; h < 5; h++){
-            cout << confusionMatrixTA.at<int>(g,h) << "\n";
-        }
-    }
+normalizeMatrices(confusionMatrixDamien,confusionMatrixDan, confusionMatrixSteve, confusionMatrixTA);
 
     return 0;
+}
+
+void normalizeMatrices(Mat confusionMatrixDamien, Mat confusionMatrixDan, Mat confusionMatrixSteve, Mat confusionMatrixTA){
+    cout << "Damien\n";
+    int g, h;
+Mat confusionMatrixDamienNormalized = Mat::zeros(5, 5, CV_64F);
+Mat confusionMatrixSteveNormalized = Mat::zeros(5, 5, CV_64F);
+Mat confusionMatrixDanNormalized = Mat::zeros(5, 5, CV_64F);
+Mat confusionMatrixTANormalized = Mat::zeros(5, 5, CV_64F);
+    for (g = 0; g < 5; g++){
+        double sum = 0;
+        for (h = 0; h < 5; h++){
+            sum = sum + confusionMatrixDamien.at<int>(g,h);
+        }
+        for (h = 0; h < 5; h++){
+            double value = confusionMatrixDamien.at<int>(g,h);
+            double goodvalue = value/sum;
+            confusionMatrixDamienNormalized.at<double>(g,h) = goodvalue;
+        }
+    }
+
+   for (g = 0; g < 5; g++){
+        for (h = 0; h < 5; h++){
+            printf( " %.3f  ", confusionMatrixDamienNormalized.at<double>(g,h));
+        }
+        cout << "\n";
+    }
+    cout << "Steve" << "\n";
+    for (g = 0; g < 5; g++){
+        double sum = 0;
+        for (h = 0; h < 5; h++){
+            sum = sum + confusionMatrixSteve.at<int>(g,h);
+        }
+        for (h = 0; h < 5; h++){
+            double value = confusionMatrixSteve.at<int>(g,h);
+            double goodvalue = value/sum;
+            confusionMatrixSteveNormalized.at<double>(g,h) = goodvalue;
+        }
+    }
+   for (g = 0; g < 5; g++){
+        for (h = 0; h < 5; h++){
+            printf( " %.3f  ", confusionMatrixSteveNormalized.at<double>(g,h));
+        }
+        cout << "\n";
+    }
+cout << "Dan" << "\n";
+for (g = 0; g < 5; g++){
+    double sum = 0;
+    for (h = 0; h < 5; h++){
+        sum = sum + confusionMatrixDan.at<int>(g,h);
+    }
+    for (h = 0; h < 5; h++){
+        double value = confusionMatrixDan.at<int>(g,h);
+        double goodvalue = value/sum;
+        confusionMatrixDanNormalized.at<double>(g,h) = goodvalue;
+    }
+}
+for (g = 0; g < 5; g++){
+    for (h = 0; h < 5; h++){
+        printf( " %.3f  ", confusionMatrixDanNormalized.at<double>(g,h));
+    }
+    cout << "\n";
+}
+
+cout << "TA" << "\n";
+for (g = 0; g < 5; g++){
+    double sum = 0;
+    for (h = 0; h < 5; h++){
+        sum = sum + confusionMatrixTA.at<int>(g,h);
+    }
+    for (h = 0; h < 5; h++){
+        double value = confusionMatrixTA.at<int>(g,h);
+        double goodvalue = value/sum;
+        confusionMatrixTANormalized.at<double>(g,h) = goodvalue;
+    }
+}
+for (g = 0; g < 5; g++){
+    for (h = 0; h < 5; h++){
+        printf( " %.3f  ", confusionMatrixTANormalized.at<double>(g,h));
+    }
+    cout << "\n";
+}
 }
 
 void faceTagging(){
