@@ -4,6 +4,11 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <stdio.h>
+#include "opencv2/objdetect/objdetect.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+
 using namespace cv;
 using namespace std;
 // Functions prototypes
@@ -29,6 +34,9 @@ vector< vector<int> > lbp_main(vector<Face_Bounding> faces, vector<Face_Bounding
 int nearest_face(vector<int> test_hist, vector< vector<int> > trained_hists);
 bool in_box(Point2d in, Point2d box1, Point2d box2);
 void generateHistograms(vector<Face_Bounding> &faces, Mat &centers, vector<vector<int>> &histogramTestImages);
+vector< vector<Point> > detectAndDisplay(Mat frame, CascadeClassifier face_cascade);
+vector< vector<Point> > face_detect_main(Mat frame);
+void face_tagging_results(Mat group, vector< vector<Point> > tagged_faces, vector<Face_Bounding> faces, Mat centres, vector< vector<int> > faces_as_codewords);
 void insertInConfusionMatrix(string poseTest, string poseResult, Mat &confusionMatrix);
 void faceTagging();
 void detectAndDisplay(Mat frame);
@@ -275,34 +283,33 @@ int main()
 
     //Thuy-Anh
     faceTest = {"thuy-anh", "0", Point2d(119,93),Point2d(461,615),picturesTest[28]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "0", Point2d(149,191),Point2d(480,631),picturesTest[29]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "0", Point2d(117,194),Point2d(480,565),picturesTest[30]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "0", Point2d(115,190),Point2d(455,643),picturesTest[31]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "0", Point2d(120,100),Point2d(475,550),picturesTest[32]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "0", Point2d(142,116),Point2d(454,574),picturesTest[33]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "-45", Point2d(119,132),Point2d(489,577),picturesTest[34]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "-45", Point2d(144,148),Point2d(477,554),picturesTest[35]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "-30", Point2d(96,138),Point2d(457,584),picturesTest[36]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "-30", Point2d(182,124),Point2d(500,527),picturesTest[37]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "30", Point2d(107,114),Point2d(413,548),picturesTest[38]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "30", Point2d(89,139),Point2d(406,548),picturesTest[39]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "45", Point2d(111,120),Point2d(480,600),picturesTest[40]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "45", Point2d(66,118),Point2d(437,556),picturesTest[41]};
-      imagesTest.push_back(faceTest);
-
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "0", Point2d(149,191),Point2d(480,631),picturesTest[29]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "0", Point2d(117,194),Point2d(480,565),picturesTest[30]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "0", Point2d(115,190),Point2d(455,643),picturesTest[31]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "0", Point2d(120,100),Point2d(475,550),picturesTest[32]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "0", Point2d(142,116),Point2d(454,574),picturesTest[33]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "-45", Point2d(119,132),Point2d(489,577),picturesTest[34]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "-45", Point2d(144,148),Point2d(477,554),picturesTest[35]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "-30", Point2d(96,138),Point2d(457,584),picturesTest[36]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "-30", Point2d(182,124),Point2d(500,527),picturesTest[37]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "30", Point2d(107,114),Point2d(413,548),picturesTest[38]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "30", Point2d(89,139),Point2d(406,548),picturesTest[39]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "45", Point2d(111,120),Point2d(480,600),picturesTest[40]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "45", Point2d(66,118),Point2d(437,556),picturesTest[41]};
+    imagesTest.push_back(faceTest);
 
     //Damien
      faceTest = {"damien","0",Point2d(122,138),Point2d(451,628),picturesTest[42]};
@@ -334,13 +341,13 @@ int main()
      faceTest = {"damien", "0",Point2d(133,153),Point2d(449,608),picturesTest[55]};
      imagesTest.push_back(faceTest);
 
+    cout << "entering lbp main" << endl;
+    //lbp_main(images, imagesTest);
+
+
     //faceTagging();
     vector<vector<int>> histogramTestImages;
     generateHistograms(imagesTest,centers,histogramTestImages);
-
-    //cout << "entering lbp main" << endl;
-    //lbp_main(images, imagesTest);
-    //exit(0);
 
     //0 is -45, 1 is -30, 2 is 0,3 is 30, 4 is 45
     //rows represent training images and columns testing
@@ -846,7 +853,55 @@ vector< vector<int> > lbp_main(vector<Face_Bounding> faces, vector<Face_Bounding
 
     lbp_recognition_results(test_faces, faces, centres, faces_as_codewords);
 
+    Mat group_shot = imread("IMG_5374.JPG", CV_LOAD_IMAGE_UNCHANGED);
+    vector< vector<Point> > tagged_faces = face_detect_main(group_shot);
+    face_tagging_results(group_shot, tagged_faces, faces, centres, faces_as_codewords);
+
     return faces_as_codewords;
+}
+
+void face_tagging_results(Mat group, vector< vector<Point> > tagged_faces, vector<Face_Bounding> faces, Mat centres, vector< vector<int> > faces_as_codewords)
+{
+    Mat tagged_face;
+    Mat features;
+    Mat output;
+    group.copyTo(output);
+    //for each face
+    for(int i=0; i<tagged_faces.size(); i++)
+    {
+        //extract the actual face first
+        tagged_face = Mat(group, Rect(tagged_faces[i][0], tagged_faces[i][1]));
+
+        //normalize it
+        normalize(tagged_face, tagged_face, 0, 255, CV_MINMAX, CV_32F);
+
+        //extract them features
+        features = lbp_extract(tagged_face, 10, 10);
+
+        //run through and generate a histogram of code words
+        vector<int> codewords;
+        for(int j=0; j<50; j++)
+        {
+            codewords.push_back(0);
+        }
+
+        //for each feature in this face
+        for(int j=0; j<features.rows; j++)
+        {
+            codewords[nearest_centre(features.row(j), centres)] += 1;
+        }
+
+        //id and then name of matched face 
+        int matched_face = nearest_face(codewords, faces_as_codewords);
+        cout << "match: " << matched_face << endl;
+        string name = faces[matched_face].name;
+
+        //write the name on the picture
+        putText(output, name, tagged_faces[i][0], FONT_HERSHEY_PLAIN, 2, Scalar(255,0,255));
+    }
+    // resize(output, output, Size(800, 600));
+    imshow("tagged", output);
+    waitKey(0);
 }
 
 
@@ -986,5 +1041,70 @@ int lbp_val(Mat img, int i, int j)
     return out;
 }
 
+vector< vector<Point> > face_detect_main(Mat frame)
+{
+    //to find where your module is, type "locate haarcascade_frontalface_alt.xml in your cmd line "
+    string face_cascade_name = "/usr/local/share/OpenCV/haarcascades/haarcascade_frontalface_alt.xml";
+    CascadeClassifier face_cascade;  
+    vector < vector<Point> > faceDetectionVector;
 
-//determines if the first point is within the box defined by the second two points
+    // Load the cascade
+    if (!face_cascade.load(face_cascade_name))
+    {
+        printf("Couldn't load face cascade module\n");
+        exit(-1);
+    };
+
+    // Read the image file
+    // Mat frame = imread("group.JPG");
+    //Mat frame = imread("lenna.png");
+
+    if (!frame.empty())
+    {
+        faceDetectionVector = detectAndDisplay(frame, face_cascade); //the magic happens here : detects faces from a pic
+        waitKey(0);
+    }
+    else
+        printf("Are you sure you have the correct filename?\n");
+
+    // cout << faceDetectionVector.size() << endl;
+    return faceDetectionVector;
+}
+
+// detecs faces and displays them in the picture
+vector < vector<Point> > detectAndDisplay(Mat frame, CascadeClassifier face_cascade)
+{
+    std::vector<Rect> faces;
+    Mat frame_gray;
+    Mat crop;
+    Mat res;
+    Mat gray;
+    vector<Point> faceCoords;
+    vector < vector<Point> > faceVector;
+
+    cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
+    equalizeHist(frame_gray, frame_gray);
+
+    // Detect faces
+    face_cascade.detectMultiScale(frame_gray, faces, 1.1, 2, 0 | CASCADE_SCALE_IMAGE, Size(30, 30));
+
+    size_t ic = 0; // ic is index of current element
+
+    for (ic = 0; ic < faces.size(); ic++) // Iterate through all current elements (detected faces)
+    {
+        Point pt1(faces[ic].x, faces[ic].y); // Display detected faces on main window - live stream from camera
+        faceCoords.push_back(pt1);
+        Point pt2((faces[ic].x + faces[ic].height), (faces[ic].y + faces[ic].width));
+        faceCoords.push_back(pt2);
+        rectangle(frame, pt1, pt2, Scalar(0, 255, 0), 2, 8, 0);
+
+        faceVector.push_back(faceCoords);
+        faceCoords.clear();
+    }
+
+    // imshow("original", frame);
+
+    return faceVector;
+    //return coords;
+
+}
