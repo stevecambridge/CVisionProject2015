@@ -37,15 +37,15 @@ int main()
     /* Load the training images */
     vector<Mat> pictures;
     // put the full address of the Training Images.txt here
-    const string trainingfilelistDamien = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damien.txt";
-    const string trainingfilelistSteve = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/steve.txt";
-    const string trainingfilelistDan = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/dan.txt";
-    const string trainingfilelistThuyanh = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/thuy-anh.txt";
+    const string trainingfilelistDamien = "damien.txt";
+    const string trainingfilelistSteve = "steve.txt";
+    const string trainingfilelistDan = "dan.txt";
+    const string trainingfilelistThuyanh = "thuy-anh.txt";
     // put the full address of the Training Images folder here
-    const string trainingBaseAddressDamien = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damien";
-    const string trainingBaseAddressDan = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/dan";
-    const string trainingBaseAddressSteve = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/steve";
-    const string trainingBaseAddressThuyanh = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/thuy-anh";
+    const string trainingBaseAddressDamien = "damien";
+    const string trainingBaseAddressDan = "dan";
+    const string trainingBaseAddressSteve = "steve";
+    const string trainingBaseAddressThuyanh = "thuy-anh";
     // Load the training dataset
     YaleDatasetLoader(pictures, trainingBaseAddressDamien, trainingfilelistDamien);
     YaleDatasetLoader(pictures, trainingBaseAddressSteve, trainingfilelistSteve);
@@ -195,14 +195,14 @@ int main()
     // put the full address of the Training Images.txt here
 
     //const string trainingfilelistDamienTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damienTest.txt";
-    const string trainingfilelistSteveTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/steveTest.txt";
-    const string trainingfilelistDanTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/danTest.txt";
-    const string trainingfilelistThuyanhTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/thuy-anhTest.txt";
+    const string trainingfilelistSteveTest = "steveTest.txt";
+    const string trainingfilelistDanTest = "danTest.txt";
+    const string trainingfilelistThuyanhTest = "thuy-anhTest.txt";
     // put the full address of the Training Images folder here
     //const string trainingBaseAddressDamienTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damienTest";
-    const string trainingBaseAddressDanTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/danTest";
-    const string trainingBaseAddressSteveTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/steveTest";
-    const string trainingBaseAddressThuyanhTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/thuy-anhTest";
+    const string trainingBaseAddressDanTest = "danTest";
+    const string trainingBaseAddressSteveTest = "steveTest";
+    const string trainingBaseAddressThuyanhTest = "thuy-anhTest";
     // Load the training dataset
 
     YaleDatasetLoader(picturesTest, trainingBaseAddressSteveTest, trainingfilelistSteveTest);
@@ -332,12 +332,14 @@ int main()
     // faceTest = {"damien", Point2d(133,153),Point2d(449,608),picturesTest[55]};
     // imagesTest.push_back(faceTest);
 
+
+
     cout << "entering lbp main" << endl;
     lbp_main(images, imagesTest);
     exit(0);
 
-    vector<vector<int>> histogramTestImages;
-    generateHistograms(imagesTest,centers,histogramTestImages);
+    // vector<vector<int>> histogramTestImages;
+    // generateHistograms(imagesTest,centers,histogramTestImages); uncomment
 
     // Mat histogramTestImages;
     // generateHistograms(imagesTest,centers,histogramTestImages);
@@ -356,36 +358,36 @@ int main()
         }
     }*/
 
-    double newNorm;
-    double norm = 10000;
-    int x;
-    int i;
-    int index = 0;
-    int good = 0;
-    for(x = 0; x < histogramTestImages.size(); x++){
-        for (i = 0; i < histogramsForFaces.size(); i++){
-            //computes the euclidean distance between the two descriptors
-            vector<int> test = histogramTestImages[x];
-            vector<int> train = histogramsForFaces[i];
-            newNorm = cv::norm(test, train, NORM_L2);
-            //Store the best match with that descriptor
-            if (newNorm < norm){
-               norm = newNorm;
-               index = i;
-            }
-        }
-        //Pushes back the center to which the descriptor is matched. The centers
-        //are in the same order as the descriptors
-        string nameTest = imagesTest[x].name;
-        string nameResult = images[index].name;
-        if (nameTest.compare(nameResult) == 0){
-            good = good + 1;
-        }
-        norm = 10000;
-        index = 0;
-    }
+    // double newNorm;
+    // double norm = 10000;
+    // int x;
+    // int i;
+    // int index = 0;
+    // int good = 0;
+    // for(x = 0; x < histogramTestImages.size(); x++){
+    //     for (i = 0; i < histogramsForFaces.size(); i++){
+    //         //computes the euclidean distance between the two descriptors
+    //         vector<int> test = histogramTestImages[x];
+    //         vector<int> train = histogramsForFaces[i];
+    //         newNorm = cv::norm(test, train, NORM_L2);
+    //         //Store the best match with that descriptor
+    //         if (newNorm < norm){
+    //            norm = newNorm;
+    //            index = i;
+    //         }
+    //     }
+    //     //Pushes back the center to which the descriptor is matched. The centers
+    //     //are in the same order as the descriptors
+    //     string nameTest = imagesTest[x].name;
+    //     string nameResult = images[index].name;
+    //     if (nameTest.compare(nameResult) == 0){
+    //         good = good + 1;
+    //     }
+    //     norm = 10000;
+    //     index = 0;
+    // }  uncomment
 
-    cout <<  "Good" << to_string(good);
+    // cout <<  "Good" << to_string(good); uncomment
 
     // lbp_main(images, imagesTest);
 
@@ -642,6 +644,7 @@ void lbp_recognition_results(vector<Face_Bounding> test_faces, vector<Face_Bound
     int errors = 0;
     for(int i=0; i<test_faces.size(); i++)
     {
+        normalize(test_faces[i].image, test_faces[i].image, 0, 255, CV_MINMAX, CV_32F);
         Rect bounding_box = Rect(test_faces[i].top_left, test_faces[i].bottom_right);
         features = lbp_extract(Mat(test_faces[i].image, bounding_box), 10, 10);
 
@@ -693,7 +696,9 @@ vector< vector<int> > lbp_main(vector<Face_Bounding> faces, vector<Face_Bounding
     for(int i=0; i<faces.size(); i++)
     {
         //extract lbp features within the bounding box only and add them to the descriptors matrix
+        normalize(faces[i].image, faces[i].image, 0, 255, CV_MINMAX, CV_32F);
         Rect bounding_box = Rect(faces[i].top_left, faces[i].bottom_right);
+        Mat face = Mat(faces[i].image, bounding_box);
         descriptors.push_back(lbp_extract(Mat(faces[i].image, bounding_box), 10, 10));
         // vconcat(descriptors, lbp_extract(Mat(faces[i].image, bounding_box), 10, 10), descriptors);
     }
@@ -701,12 +706,9 @@ vector< vector<int> > lbp_main(vector<Face_Bounding> faces, vector<Face_Bounding
     //cluster that ish
     Mat labels, centres;
     descriptors.convertTo(descriptors, CV_32F);
-    cout << "here?" << endl;
     kmeans(descriptors, 50, labels,
                 TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 10, 1.0),
                    3, KMEANS_PP_CENTERS, centres);
-
-    cout << "got this far" << endl;
 
     vector< vector<int> > faces_as_codewords = lbp_cluster(descriptors, faces, centres);
 
@@ -790,7 +792,6 @@ Mat lbp_extract(Mat face, int W, int H)
     Point2d left;
     Point2d right;
 
-    cout << "before loop" << endl;
     //loop over image and perform lbp junk on each window of face
     for(int i=0; i<W; i++)
     {
@@ -800,13 +801,16 @@ Mat lbp_extract(Mat face, int W, int H)
             right= Point2d(j*col_width+col_width, i*row_height+row_height);
             window = Mat(face, Rect(left, right));
             histogram = lbp_histogram(window);
-            lbp_feature_row = Mat(1, 256, CV_32F, 1);
-            for(int k=0; k<256; k++)
-                lbp_feature_row.at<double>(0,k) = histogram[k];
-            vconcat(lbp_features, lbp_feature_row, lbp_features);
+
+            lbp_feature_row = Mat(histogram, true);
+            lbp_feature_row = lbp_feature_row.t();
+            lbp_feature_row.convertTo(lbp_feature_row, CV_32F);
+            // for(int k=0; k<256; k++)
+            //     lbp_feature_row.at<int>(0,k) = histogram[k];
+            // vconcat(lbp_features, lbp_feature_row, lbp_features);
+            lbp_features.push_back(lbp_feature_row);
         }
     }
-    cout << "done extract loop" << endl;
     lbp_features = Mat(lbp_features, Rect(0,1,lbp_features.cols, lbp_features.rows-1));
 
     return lbp_features;
@@ -820,7 +824,6 @@ vector<int> lbp_histogram(Mat img_window)
     for(int i=0; i<256; i++)
         hist.push_back(0);
 
-    cvtColor(img_window, img_window, CV_RGB2GRAY);
     for(int i=0; i<img_window.rows; i++)
     {
         for(int j=0; j<img_window.cols; j++)
@@ -837,16 +840,17 @@ vector<int> lbp_histogram(Mat img_window)
 //helper for lbp_histogram
 int lbp_val(Mat img, int i, int j)
 {
-    int center = img.at<double>(i,j);
+    // cvtColor(img, img, CV_RGB2GRAY);
+    int center = img.at<int>(i,j);
     int out = 0;
-    out += (img.at<double>(i-1, j) < center);
-    out += (img.at<double>(i-1, j+1) < center)*2;
-    out += (img.at<double>(i, j+1) < center)*4;
-    out += (img.at<double>(i+1, j+1) < center)*8;
-    out += (img.at<double>(i+1, j) < center)*16;
-    out += (img.at<double>(i+1, j-1) < center)*32;
-    out += (img.at<double>(i, j-1) < center)*64;
-    out += (img.at<double>(i-1, j-1) < center)*128;
+    out += (img.at<int>(i-1, j) < center);
+    out += (img.at<int>(i-1, j+1) < center)*2;
+    out += (img.at<int>(i, j+1) < center)*4;
+    out += (img.at<int>(i+1, j+1) < center)*8;
+    out += (img.at<int>(i+1, j) < center)*16;
+    out += (img.at<int>(i+1, j-1) < center)*32;
+    out += (img.at<int>(i, j-1) < center)*64;
+    out += (img.at<int>(i-1, j-1) < center)*128;
     return out;
 }
 
