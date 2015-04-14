@@ -15,6 +15,7 @@ using namespace std;
 struct Face_Bounding
 {
     string name;
+    string pose;
     Point2d top_left;
     Point2d bottom_right;
     Mat image;
@@ -36,6 +37,9 @@ void generateHistograms(vector<Face_Bounding> &faces, Mat &centers, vector<vecto
 vector< vector<Point> > detectAndDisplay(Mat frame, CascadeClassifier face_cascade);
 vector< vector<Point> > face_detect_main(Mat frame);
 void face_tagging_results(Mat group, vector< vector<Point> > tagged_faces, vector<Face_Bounding> faces, Mat centres, vector< vector<int> > faces_as_codewords);
+void insertInConfusionMatrix(string poseTest, string poseResult, Mat &confusionMatrix);
+void faceTagging();
+void detectAndDisplay(Mat frame);
 
 int main()
 {
@@ -44,16 +48,15 @@ int main()
 
     /* Load the training images */
     vector<Mat> pictures;
-    // put the full address of the Training Images.txt here
-    const string trainingfilelistDamien = "damien.txt";
-    const string trainingfilelistSteve = "steve.txt";
-    const string trainingfilelistDan = "dan.txt";
-    const string trainingfilelistThuyanh = "thuy-anh.txt";
+    const string trainingfilelistDamien = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damien.txt";
+    const string trainingfilelistSteve = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/steve.txt";
+    const string trainingfilelistDan = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/dan.txt";
+    const string trainingfilelistThuyanh = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/thuy-anh.txt";
     // put the full address of the Training Images folder here
-    const string trainingBaseAddressDamien = "damien";
-    const string trainingBaseAddressDan = "dan";
-    const string trainingBaseAddressSteve = "steve";
-    const string trainingBaseAddressThuyanh = "thuy-anh";
+    const string trainingBaseAddressDamien = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damien";
+    const string trainingBaseAddressDan = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/dan";
+    const string trainingBaseAddressSteve = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/steve";
+    const string trainingBaseAddressThuyanh = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/thuy-anh";
     // Load the training dataset
     YaleDatasetLoader(pictures, trainingBaseAddressDamien, trainingfilelistDamien);
     YaleDatasetLoader(pictures, trainingBaseAddressSteve, trainingfilelistSteve);
@@ -63,135 +66,132 @@ int main()
     vector<Face_Bounding> images;
     //begin damien photos
     //Close, medium and then far
-    Face_Bounding face = {"damien", Point2d(117,108),Point2d(441,572),pictures[0]};
+    Face_Bounding face = {"damien","0",Point2d(117,108),Point2d(441,572),pictures[0]};
     images.push_back(face);
-    face = {"damien", Point2d(61,122),Point2d(416,609),pictures[1]};
+    face = {"damien","30", Point2d(61,122),Point2d(416,609),pictures[1]};
     images.push_back(face);
-    face = {"damien", Point2d(53,78),Point2d(438,602),pictures[2]};
+    face = {"damien","45", Point2d(53,78),Point2d(438,602),pictures[2]};
     images.push_back(face);
-    face = {"damien", Point2d(65,110),Point2d(507,627),pictures[3]};
+    face = {"damien","-30",Point2d(65,110),Point2d(507,627),pictures[3]};
     images.push_back(face);
-    face = {"damien", Point2d(71,92),Point2d(511,619),pictures[4]};
+    face = {"damien","-45",Point2d(71,92),Point2d(511,619),pictures[4]};
     images.push_back(face);
-    face = {"damien", Point2d(189,208),Point2d(399,436),pictures[5]};
+    face = {"damien","0", Point2d(189,208),Point2d(399,436),pictures[5]};
     images.push_back(face);
-    face = {"damien", Point2d(192,231),Point2d(395,469),pictures[6]};
+    face = {"damien","30", Point2d(192,231),Point2d(395,469),pictures[6]};
     images.push_back(face);
-    face = {"damien", Point2d(154,234),Point2d(380,488),pictures[7]};
+    face = {"damien","45",Point2d(154,234),Point2d(380,488),pictures[7]};
     images.push_back(face);
-    face = {"damien", Point2d(176,216),Point2d(420,474),pictures[8]};
+    face = {"damien","-30",Point2d(176,216),Point2d(420,474),pictures[8]};
     images.push_back(face);
-    face = {"damien", Point2d(142,195),Point2d(441,463),pictures[9]};
+    face = {"damien","-45",Point2d(142,195),Point2d(441,463),pictures[9]};
     images.push_back(face);
-    face = {"damien", Point2d(236,231),Point2d(367,361),pictures[10]};
+    face = {"damien","0",Point2d(236,231),Point2d(367,361),pictures[10]};
     images.push_back(face);
-    face = {"damien", Point2d(217,233),Point2d(381,387),pictures[11]};
+    face = {"damien","30", Point2d(217,233),Point2d(381,387),pictures[11]};
     images.push_back(face);
-    face = {"damien", Point2d(189,244),Point2d(376,408),pictures[12]};
+    face = {"damien","45",Point2d(189,244),Point2d(376,408),pictures[12]};
     images.push_back(face);
-    face = {"damien", Point2d(218,257),Point2d(395,413),pictures[13]};
+    face = {"damien","-30",Point2d(218,257),Point2d(395,413),pictures[13]};
     images.push_back(face);
-    face = {"damien", Point2d(215,247),Point2d(394,413),pictures[14]};
+    face = {"damien","-45",Point2d(215,247),Point2d(394,413),pictures[14]};
     images.push_back(face);
 
     //begin steve photos
-    face = {"steve", Point2d(64,146),Point2d(454,659),pictures[15]};
+    face = {"steve","45",Point2d(64,146),Point2d(454,659),pictures[15]};
     images.push_back(face);
-    face = {"steve", Point2d(91,167),Point2d(467,684),pictures[16]};
+    face = {"steve","30", Point2d(91,167),Point2d(467,684),pictures[16]};
     images.push_back(face);
-    face = {"steve", Point2d(119,141),Point2d(459,650),pictures[17]};
+    face = {"steve","0",Point2d(119,141),Point2d(459,650),pictures[17]};
     images.push_back(face);
-    face = {"steve", Point2d(123,137),Point2d(530,639),pictures[18]};
+    face = {"steve","-30",Point2d(123,137),Point2d(530,639),pictures[18]};
     images.push_back(face);
-    face = {"steve", Point2d(103,132),Point2d(534,668),pictures[19]};
+    face = {"steve","-45", Point2d(103,132),Point2d(534,668),pictures[19]};
     images.push_back(face);
-    face = {"steve", Point2d(141,246),Point2d(402,558),pictures[20]};
+    face = {"steve", "45",Point2d(141,246),Point2d(402,558),pictures[20]};
     images.push_back(face);
-    face = {"steve", Point2d(181,234),Point2d(407,539),pictures[21]};
+    face = {"steve","30", Point2d(181,234),Point2d(407,539),pictures[21]};
     images.push_back(face);
-    face = {"steve", Point2d(189,226),Point2d(423,531),pictures[22]};
+    face = {"steve", "0",Point2d(189,226),Point2d(423,531),pictures[22]};
     images.push_back(face);
-    face = {"steve", Point2d(190,220),Point2d(450,530),pictures[23]};
+    face = {"steve", "-30",Point2d(190,220),Point2d(450,530),pictures[23]};
     images.push_back(face);
-    face = {"steve", Point2d(185,193),Point2d(463,528),pictures[24]};
+    face = {"steve", "-45",Point2d(185,193),Point2d(463,528),pictures[24]};
     images.push_back(face);
-    face = {"steve", Point2d(240,103),Point2d(356,262),pictures[25]};
+    face = {"steve", "0",Point2d(240,103),Point2d(356,262),pictures[25]};
     images.push_back(face);
-    face = {"steve", Point2d(235,96),Point2d(353,278),pictures[26]};
+    face = {"steve", "45",Point2d(235,96),Point2d(353,278),pictures[26]};
     images.push_back(face);
-    face = {"steve", Point2d(251,98),Point2d(367,250),pictures[27]};
+    face = {"steve", "30",Point2d(251,98),Point2d(367,250),pictures[27]};
     images.push_back(face);
-    face = {"steve", Point2d(242,100),Point2d(366,266),pictures[28]};
+    face = {"steve", "-30",Point2d(242,100),Point2d(366,266),pictures[28]};
     images.push_back(face);
-    face = {"steve", Point2d(239,107),Point2d(372,263),pictures[29]};
+    face = {"steve", "-45",Point2d(239,107),Point2d(372,263),pictures[29]};
     images.push_back(face);
 
     //begin dan photos
-    face = {"dan", Point2d(127,11),Point2d(524,572),pictures[30]};
+    face = {"dan", "45", Point2d(127,11),Point2d(524,572),pictures[30]};
     images.push_back(face);
-    face = {"dan", Point2d(135,121),Point2d(478,562),pictures[31]};
+    face = {"dan", "30",Point2d(135,121),Point2d(478,562),pictures[31]};
     images.push_back(face);
-    face = {"dan", Point2d(129,123),Point2d(449,579),pictures[32]};
+    face = {"dan", "0",Point2d(129,123),Point2d(449,579),pictures[32]};
     images.push_back(face);
-    face = {"dan", Point2d(127,117),Point2d(493,586),pictures[33]};
+    face = {"dan", "-30",Point2d(127,117),Point2d(493,586),pictures[33]};
     images.push_back(face);
-    face = {"dan", Point2d(91,116),Point2d(480,560),pictures[34]};
+    face = {"dan", "-45",Point2d(91,116),Point2d(480,560),pictures[34]};
     images.push_back(face);
-    face = {"dan", Point2d(175,178),Point2d(408,457),pictures[35]};
+    face = {"dan", "45",Point2d(175,178),Point2d(408,457),pictures[35]};
     images.push_back(face);
-    face = {"dan", Point2d(179,187),Point2d(407,469),pictures[36]};
+    face = {"dan", "30",Point2d(179,187),Point2d(407,469),pictures[36]};
     images.push_back(face);
-    face = {"dan", Point2d(180,190),Point2d(380,455),pictures[37]};
+    face = {"dan", "0",Point2d(180,190),Point2d(380,455),pictures[37]};
     images.push_back(face);
-    face = {"dan", Point2d(172,190),Point2d(380,442),pictures[38]};
+    face = {"dan", "-30",Point2d(172,190),Point2d(380,442),pictures[38]};
     images.push_back(face);
-    face = {"dan", Point2d(166,190),Point2d(391,444),pictures[39]};
+    face = {"dan", "-45",Point2d(166,190),Point2d(391,444),pictures[39]};
     images.push_back(face);
-    face = {"dan", Point2d(237,228),Point2d(371,388),pictures[40]};
+    face = {"dan", "0",Point2d(237,228),Point2d(371,388),pictures[40]};
     images.push_back(face);
-    face = {"dan", Point2d(225,234),Point2d(376,409),pictures[41]};
+    face = {"dan", "45",Point2d(225,234),Point2d(376,409),pictures[41]};
     images.push_back(face);
-    face = {"dan", Point2d(217,231),Point2d(360,413),pictures[42]};
+    face = {"dan", "30",Point2d(217,231),Point2d(360,413),pictures[42]};
     images.push_back(face);
-    face = {"dan", Point2d(232,217),Point2d(375,390),pictures[43]};
+    face = {"dan", "-30",Point2d(232,217),Point2d(375,390),pictures[43]};
     images.push_back(face);
-    face = {"dan", Point2d(203,227),Point2d(347,389),pictures[44]};
+    face = {"dan", "-45",Point2d(203,227),Point2d(347,389),pictures[44]};
     images.push_back(face);
 
     //begin thuyanh
-    face = {"thuy-anh", Point2d(127,11),Point2d(524,572),pictures[45]};
-    images.push_back(face);
-    face = {"thuy-anh", Point2d(135,121),Point2d(478,562),pictures[46]};
-    images.push_back(face);
-    face = {"thuy-anh", Point2d(129,123),Point2d(449,579),pictures[47]};
-    images.push_back(face);
-    face = {"thuy-anh", Point2d(127,117),Point2d(493,586),pictures[48]};
-    images.push_back(face);
-    face = {"thuy-anh", Point2d(91,116),Point2d(480,560),pictures[49]};
-    images.push_back(face);
-    face = {"thuy-anh", Point2d(175,178),Point2d(408,457),pictures[50]};
-    images.push_back(face);
-    face = {"thuy-anh", Point2d(179,187),Point2d(407,469),pictures[51]};
-    images.push_back(face);
-    face = {"thuy-anh", Point2d(180,190),Point2d(380,455),pictures[52]};
-    images.push_back(face);
-    face = {"thuy-anh", Point2d(172,190),Point2d(380,442),pictures[53]};
-    images.push_back(face);
-    face = {"thuy-anh", Point2d(166,190),Point2d(391,444),pictures[54]};
-    images.push_back(face);
-    face = {"thuy-anh", Point2d(237,228),Point2d(371,388),pictures[55]};
-    images.push_back(face);
-    face = {"thuy-anh", Point2d(225,234),Point2d(376,409),pictures[56]};
-    images.push_back(face);
-    face = {"thuy-anh", Point2d(217,231),Point2d(360,413),pictures[57]};
-    images.push_back(face);
-    face = {"thuy-anh", Point2d(232,217),Point2d(375,390),pictures[58]};
-    images.push_back(face);
-    face = {"thuy-anh", Point2d(203,227),Point2d(347,389),pictures[59]};
-    images.push_back(face);
-
-    //imshow("hello",images[1].image);
-    //waitKey(0);
+    face = {"thuy-anh", "0", Point2d(127,11),Point2d(524,572),pictures[45]};
+      images.push_back(face);
+      face = {"thuy-anh", "45", Point2d(135,121),Point2d(478,562),pictures[46]};
+      images.push_back(face);
+      face = {"thuy-anh", "30", Point2d(129,123),Point2d(449,579),pictures[47]};
+      images.push_back(face);
+      face = {"thuy-anh", "-30", Point2d(127,117),Point2d(493,586),pictures[48]};
+      images.push_back(face);
+      face = {"thuy-anh", "-45", Point2d(91,116),Point2d(480,560),pictures[49]};
+      images.push_back(face);
+      face = {"thuy-anh", "0", Point2d(175,178),Point2d(408,457),pictures[50]};
+      images.push_back(face);
+      face = {"thuy-anh", "45", Point2d(179,187),Point2d(407,469),pictures[51]};
+      images.push_back(face);
+      face = {"thuy-anh", "30", Point2d(180,190),Point2d(380,455),pictures[52]};
+      images.push_back(face);
+      face = {"thuy-anh", "-30", Point2d(172,190),Point2d(380,442),pictures[53]};
+      images.push_back(face);
+      face = {"thuy-anh", "-45", Point2d(166,190),Point2d(391,444),pictures[54]};
+      images.push_back(face);
+      face = {"thuy-anh", "0", Point2d(237,228),Point2d(371,388),pictures[55]};
+      images.push_back(face);
+      face = {"thuy-anh", "45", Point2d(225,234),Point2d(376,409),pictures[56]};
+      images.push_back(face);
+      face = {"thuy-anh", "30", Point2d(217,231),Point2d(360,413),pictures[57]};
+      images.push_back(face);
+      face = {"thuy-anh", "-30", Point2d(232,217),Point2d(375,390),pictures[58]};
+      images.push_back(face);
+      face = {"thuy-anh", "-45", Point2d(203,227),Point2d(347,389),pictures[59]};
+      images.push_back(face);
 
     // Call Part1 function
     Mat centers;
@@ -201,114 +201,114 @@ int main()
     /* Load the testing images */
     vector<Mat> picturesTest;
     // put the full address of the Training Images.txt here
-
-    //const string trainingfilelistDamienTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damienTest.txt";
-    const string trainingfilelistSteveTest = "steveTest.txt";
-    const string trainingfilelistDanTest = "danTest.txt";
-    const string trainingfilelistThuyanhTest = "thuy-anhTest.txt";
+    const string trainingfilelistDamienTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damienTest.txt";
+    const string trainingfilelistSteveTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/steveTest.txt";
+    const string trainingfilelistDanTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/danTest.txt";
+    const string trainingfilelistThuyanhTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/thuy-anhTest.txt";
     // put the full address of the Training Images folder here
-    //const string trainingBaseAddressDamienTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damienTest";
-    const string trainingBaseAddressDanTest = "danTest";
-    const string trainingBaseAddressSteveTest = "steveTest";
-    const string trainingBaseAddressThuyanhTest = "thuy-anhTest";
+    const string trainingBaseAddressDamienTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damienTest";
+    const string trainingBaseAddressDanTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/danTest";
+    const string trainingBaseAddressSteveTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/steveTest";
+    const string trainingBaseAddressThuyanhTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/thuy-anhTest";
+
     // Load the training dataset
 
     YaleDatasetLoader(picturesTest, trainingBaseAddressSteveTest, trainingfilelistSteveTest);
     YaleDatasetLoader(picturesTest, trainingBaseAddressDanTest, trainingfilelistDanTest);
     YaleDatasetLoader(picturesTest, trainingBaseAddressThuyanhTest, trainingfilelistThuyanhTest);
-    //YaleDatasetLoader(picturesTest, trainingBaseAddressDamienTest, trainingfilelistDamienTest);
+    YaleDatasetLoader(picturesTest, trainingBaseAddressDamienTest, trainingfilelistDamienTest);
 
     vector<Face_Bounding> imagesTest;
     //Steve
-    Face_Bounding faceTest = {"steve",Point2d(122,106),Point2d(511,716),picturesTest[0]};
+    Face_Bounding faceTest = {"steve","0",Point2d(122,106),Point2d(511,716),picturesTest[0]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(75,143),Point2d(462,661),picturesTest[1]};
+    faceTest = {"steve","0",Point2d(75,143),Point2d(462,661),picturesTest[1]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(138,132),Point2d(452,592),picturesTest[2]};
+    faceTest = {"steve","0",Point2d(138,132),Point2d(452,592),picturesTest[2]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(128,144),Point2d(436,604),picturesTest[3]};
+    faceTest = {"steve","0",Point2d(128,144),Point2d(436,604),picturesTest[3]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(6,68),Point2d(159,78),picturesTest[4]};
+    faceTest = {"steve","-45",Point2d(6,68),Point2d(159,78),picturesTest[4]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(159,78),Point2d(569,591),picturesTest[5]};
+    faceTest = {"steve","-45",Point2d(159,78),Point2d(569,591),picturesTest[5]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(71,81),Point2d(530,650),picturesTest[6]};
+    faceTest = {"steve","-30",Point2d(71,81),Point2d(530,650),picturesTest[6]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(165,85),Point2d(518,580),picturesTest[7]};
+    faceTest = {"steve","-30",Point2d(165,85),Point2d(518,580),picturesTest[7]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(111,74),Point2d(455,595),picturesTest[8]};
+    faceTest = {"steve","0",Point2d(111,74),Point2d(455,595),picturesTest[8]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(120,46),Point2d(443,515),picturesTest[9]};
+    faceTest = {"steve","0",Point2d(120,46),Point2d(443,515),picturesTest[9]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(100,39),Point2d(507,619),picturesTest[10]};
+    faceTest = {"steve","30",Point2d(100,39),Point2d(507,619),picturesTest[10]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(60,37),Point2d(426,527),picturesTest[11]};
+    faceTest = {"steve","30",Point2d(60,37),Point2d(426,527),picturesTest[11]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(111,56),Point2d(538,611),picturesTest[12]};
+    faceTest = {"steve","45",Point2d(111,56),Point2d(538,611),picturesTest[12]};
     imagesTest.push_back(faceTest);
-    faceTest = {"steve",Point2d(3,47),Point2d(406,548),picturesTest[13]};
+    faceTest = {"steve","45",Point2d(3,47),Point2d(406,548),picturesTest[13]};
     imagesTest.push_back(faceTest);
 
     //Dan pictures
 
-    faceTest = {"dan",Point2d(86,135),Point2d(492,622),picturesTest[14]};
+    faceTest = {"dan","0",Point2d(86,135),Point2d(492,622),picturesTest[14]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(118,106),Point2d(520,586),picturesTest[15]};
+    faceTest = {"dan","0",Point2d(118,106),Point2d(520,586),picturesTest[15]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(115,144),Point2d(434,566),picturesTest[16]};
+    faceTest = {"dan","0",Point2d(115,144),Point2d(434,566),picturesTest[16]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(108,158),Point2d(427,587),picturesTest[17]};
+    faceTest = {"dan","0",Point2d(108,158),Point2d(427,587),picturesTest[17]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(95,100),Point2d(509,671),picturesTest[18]};
+    faceTest = {"dan","0",Point2d(95,100),Point2d(509,671),picturesTest[18]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(102,142),Point2d(490,660),picturesTest[19]};
+    faceTest = {"dan","0",Point2d(102,142),Point2d(490,660),picturesTest[19]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(8,158),Point2d(477,779),picturesTest[20]};
+    faceTest = {"dan","30",Point2d(8,158),Point2d(477,779),picturesTest[20]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(30,120),Point2d(540,739),picturesTest[21]};
+    faceTest = {"dan","30",Point2d(30,120),Point2d(540,739),picturesTest[21]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(17,161),Point2d(512,757),picturesTest[22]};
+    faceTest = {"dan","45",Point2d(17,161),Point2d(512,757),picturesTest[22]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(44,98),Point2d(580,741),picturesTest[23]};
+    faceTest = {"dan","45",Point2d(44,98),Point2d(580,741),picturesTest[23]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(57,135),Point2d(520,660),picturesTest[24]};
+    faceTest = {"dan","-30",Point2d(57,135),Point2d(520,660),picturesTest[24]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(105,156),Point2d(505,625),picturesTest[25]};
+    faceTest = {"dan","-30",Point2d(105,156),Point2d(505,625),picturesTest[25]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(56,90),Point2d(555,637),picturesTest[26]};
+    faceTest = {"dan","-45",Point2d(56,90),Point2d(555,637),picturesTest[26]};
     imagesTest.push_back(faceTest);
-    faceTest = {"dan",Point2d(156,124),Point2d(576,622),picturesTest[27]};
+    faceTest = {"dan","-45",Point2d(156,124),Point2d(576,622),picturesTest[27]};
     imagesTest.push_back(faceTest);
 
     //Thuy-Anh
-    faceTest = {"thuy-anh",Point2d(119,93),Point2d(461,615),picturesTest[28]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh",Point2d(149,191),Point2d(480,631),picturesTest[29]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh",Point2d(117,194),Point2d(480,565),picturesTest[30]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh", Point2d(115,190),Point2d(455,643),picturesTest[31]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh", Point2d(120,100),Point2d(475,550),picturesTest[32]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh", Point2d(142,116),Point2d(454,574),picturesTest[33]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh", Point2d(119,132),Point2d(489,577),picturesTest[34]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh", Point2d(144,148),Point2d(477,554),picturesTest[35]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh", Point2d(96,138),Point2d(457,584),picturesTest[36]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh", Point2d(182,124),Point2d(500,527),picturesTest[37]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh",Point2d(107,114),Point2d(413,548),picturesTest[38]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh",Point2d(89,139),Point2d(406,548),picturesTest[39]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh", Point2d(111,120),Point2d(480,600),picturesTest[40]};
-    imagesTest.push_back(faceTest);
-    faceTest = {"thuy-anh", Point2d(66,118),Point2d(437,556),picturesTest[41]};
-    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "0", Point2d(119,93),Point2d(461,615),picturesTest[28]};
+      imagesTest.push_back(faceTest);
+      faceTest = {"thuy-anh", "0", Point2d(149,191),Point2d(480,631),picturesTest[29]};
+      imagesTest.push_back(faceTest);
+      faceTest = {"thuy-anh", "0", Point2d(117,194),Point2d(480,565),picturesTest[30]};
+      imagesTest.push_back(faceTest);
+      faceTest = {"thuy-anh", "0", Point2d(115,190),Point2d(455,643),picturesTest[31]};
+      imagesTest.push_back(faceTest);
+      faceTest = {"thuy-anh", "0", Point2d(120,100),Point2d(475,550),picturesTest[32]};
+      imagesTest.push_back(faceTest);
+      faceTest = {"thuy-anh", "0", Point2d(142,116),Point2d(454,574),picturesTest[33]};
+      imagesTest.push_back(faceTest);
+      faceTest = {"thuy-anh", "-45", Point2d(119,132),Point2d(489,577),picturesTest[34]};
+      imagesTest.push_back(faceTest);
+      faceTest = {"thuy-anh", "-45", Point2d(144,148),Point2d(477,554),picturesTest[35]};
+      imagesTest.push_back(faceTest);
+      faceTest = {"thuy-anh", "-30", Point2d(96,138),Point2d(457,584),picturesTest[36]};
+      imagesTest.push_back(faceTest);
+      faceTest = {"thuy-anh", "-30", Point2d(182,124),Point2d(500,527),picturesTest[37]};
+      imagesTest.push_back(faceTest);
+      faceTest = {"thuy-anh", "30", Point2d(107,114),Point2d(413,548),picturesTest[38]};
+      imagesTest.push_back(faceTest);
+      faceTest = {"thuy-anh", "30", Point2d(89,139),Point2d(406,548),picturesTest[39]};
+      imagesTest.push_back(faceTest);
+      faceTest = {"thuy-anh", "45", Point2d(111,120),Point2d(480,600),picturesTest[40]};
+      imagesTest.push_back(faceTest);
+      faceTest = {"thuy-anh", "45", Point2d(66,118),Point2d(437,556),picturesTest[41]};
+      imagesTest.push_back(faceTest);
 
     //Damien
     // faceTest = {"damien",Point2d(122,138),Point2d(451,628),picturesTest[42]};
@@ -351,19 +351,91 @@ int main()
     // Mat histogramTestImages;
     // generateHistograms(imagesTest,centers,histogramTestImages);
 
+    //Damien
+     faceTest = {"damien","0",Point2d(122,138),Point2d(451,628),picturesTest[42]};
+     imagesTest.push_back(faceTest);
+     faceTest = {"damien","0",Point2d(154,136),Point2d(428,580),picturesTest[43]};
+     imagesTest.push_back(faceTest);
+     faceTest = {"damien","-30",Point2d(68,145),Point2d(481,686),picturesTest[44]};
+     imagesTest.push_back(faceTest);
+     faceTest = {"damien","-30", Point2d(142,134),Point2d(491,586),picturesTest[45]};
+     imagesTest.push_back(faceTest);
+     faceTest = {"damien", "-45",Point2d(305,106),Point2d(531,703),picturesTest[46]};
+     imagesTest.push_back(faceTest);
+     faceTest = {"damien","-45",Point2d(95,112),Point2d(554,652),picturesTest[47]};
+     imagesTest.push_back(faceTest);
+     faceTest = {"damien","30",Point2d(80,131),Point2d(505,721),picturesTest[48]};
+     imagesTest.push_back(faceTest);
+     faceTest = {"damien","30",Point2d(52,74),Point2d(425,638),picturesTest[49]};
+     imagesTest.push_back(faceTest);
+     faceTest = {"damien", "45",Point2d(72,133),Point2d(474,681),picturesTest[50]};
+     imagesTest.push_back(faceTest);
+     faceTest = {"damien", "45",Point2d(17,109),Point2d(409,611),picturesTest[51]};
+     imagesTest.push_back(faceTest);
+     faceTest = {"damien","0",Point2d(158,142),Point2d(449,565),picturesTest[52]};
+     imagesTest.push_back(faceTest);
+     faceTest = {"damien","0",Point2d(159,123),Point2d(472,606),picturesTest[53]};
+     imagesTest.push_back(faceTest);
+     faceTest = {"damien", "0",Point2d(125,125),Point2d(475,570),picturesTest[54]};
+     imagesTest.push_back(faceTest);
+     faceTest = {"damien", "0",Point2d(133,153),Point2d(449,608),picturesTest[55]};
+     imagesTest.push_back(faceTest);
+
+    //faceTagging();
+    vector<vector<int>> histogramTestImages;
+    generateHistograms(imagesTest,centers,histogramTestImages);
+
+    //cout << "entering lbp main" << endl;
     //lbp_main(images, imagesTest);
+    //exit(0);
 
-
-    /*int g;
+    //0 is -45, 1 is -30, 2 is 0,3 is 30, 4 is 45
+    //rows represent training images and columns testing
+    Mat confusionMatrixSteve = Mat::zeros(5, 5, CV_64F);
+    Mat confusionMatrixDamien = Mat::zeros(5, 5, CV_64F);
+    Mat confusionMatrixTA = Mat::zeros(5, 5, CV_64F);
+    Mat confusionMatrixDan = Mat::zeros(5, 5, CV_64F);
+    double newNorm;
+    double norm = 10000;
+    int x;
+    int i;
+    int index = 0;
     int good = 0;
-    for (g = 0; g < histogramTestImages.rows; g++){
-        string nameTest = imagesTest[g].name;
-        int subject = nearest_centre(histogramTestImages.row(g),histogramsForFaces);
-        string nameResult = images[subject].name;
+    for(x = 0; x < histogramTestImages.size(); x++){
+        for (i = 0; i < histogramsForFaces.size(); i++){
+            //computes the euclidean distance between the two descriptors
+            vector<int> test = histogramTestImages[x];
+            vector<int> train = histogramsForFaces[i];
+            newNorm = cv::norm(test, train, NORM_L2);
+            //Store the best match with that descriptor
+            if (newNorm < norm){
+               norm = newNorm;
+               index = i;
+            }
+        }
+        //Pushes back the center to which the descriptor is matched. The centers
+        //are in the same order as the descriptors
+        string nameTest = imagesTest[x].name;
+        string poseTest = imagesTest[x].pose;
+        string nameResult = images[index].name;
+        string poseResult = images[index].pose;
+        Mat matrixToPass;
+        if (nameTest.compare("steve") == 0){
+            matrixToPass = confusionMatrixSteve;
+        } else if (nameTest.compare("damien") == 0){
+            matrixToPass = confusionMatrixDamien;
+        } else if (nameTest.compare("thuy-anh") == 0){
+            matrixToPass = confusionMatrixTA;
+        } else if (nameTest.compare("dan")== 0){
+            matrixToPass = confusionMatrixDan;
+        }
+        insertInConfusionMatrix(poseTest,poseResult, matrixToPass);
         if (nameTest.compare(nameResult) == 0){
             good = good + 1;
         }
-    }*/
+        norm = 10000;
+        index = 0;
+    }
 
     double newNorm;
     double norm = 10000;
@@ -396,7 +468,85 @@ int main()
 
     cout <<  "Good" << to_string(good);
 
+    cout << "Damien\n";
+    Mat confusionNormalized;
+    //normalize(confusionMatrixDamien,confusionNormalized,0,1,CV_MINMAX,CV_64F);
+    int g, h;
+    for (g = 0; g < 5; g++){
+        for (h = 0; h < 5; h++){
+            cout << confusionMatrixDamien.at<int>(g,h) << "\n";
+        }
+    }
+    cout << "Steve" << "\n";
+   for (g = 0; g < 5; g++){
+        for (h = 0; h < 5; h++){
+            cout << confusionMatrixSteve.at<int>(g,h) << "\n";
+        }
+    }
+    cout << "Dan" << "\n";
+    for (g = 0; g < 5; g++){
+        for (h = 0; h < 5; h++){
+            cout << confusionMatrixDan.at<int>(g,h) << "\n";
+        }
+    }
+    cout << "TA" << "\n";
+    for (g = 0; g < 5; g++){
+        for (h = 0; h < 5; h++){
+            cout << confusionMatrixTA.at<int>(g,h) << "\n";
+        }
+    }
+
     return 0;
+}
+
+void faceTagging(){
+    const int NUM_IMAGES_PART1 = 5;
+    const string IMG_NAMES_PART1[] = {"/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/IMG_5373.JPG", "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/IMG_5374.JPG","/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/IMG_5375.JPG","/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/IMG_5376.JPG","/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/IMG_5377.JPG"};
+    // Load Part1 images
+    vector<Mat> Images_part1;
+    for(int i = 0; i < NUM_IMAGES_PART1; i++)
+    {
+        cout << IMG_NAMES_PART1[i];
+    Images_part1.push_back( imread( IMG_NAMES_PART1[i] ) );
+    }
+    //detectAndDisplay(Images_part1[0]);
+    //imshow("yo",Images_part1[0]);
+    //waitKey(0);
+
+}
+
+void insertInConfusionMatrix(string poseTest, string poseResult, Mat &confusionMatrix){
+    int i, j = 0;
+    if (poseTest.compare("-45") == 0){
+        j = 0;
+    } else if (poseTest.compare("-30") == 0){
+        j = 1;
+    } else if (poseTest.compare("0") == 0){
+        j = 2;
+    } else if (poseTest.compare("30") == 0){
+        j = 3;
+    } else if (poseTest.compare("45") == 0){
+        j =4;
+    }
+    if (poseResult.compare("-45") == 0){
+        i = 0;
+    } else if (poseResult.compare("-30") == 0){
+        i = 1;
+    } else if (poseResult.compare("0") == 0){
+        i = 2;
+    } else if (poseResult.compare("30") == 0){
+        i = 3;
+    } else if (poseResult.compare("45") == 0){
+        i =4;
+    }
+    /*
+    int valueToEnter = 0;
+    if (i == j){
+        valueToEnter = 1;
+    } else {
+        valueToEnter = 0;
+    }*/
+    confusionMatrix.at<int>(i,j) = confusionMatrix.at<int>(i,j) + 1;
 }
 
 void generateHistograms(vector<Face_Bounding> &faces, Mat &centers, vector<vector<int>> &histogramTestImages){
@@ -440,9 +590,9 @@ void generateHistograms(vector<Face_Bounding> &faces, Mat &centers, vector<vecto
 
     double newNorm;
     double norm = 10000;
-    int histogram[5];
+    int histogram[10];
     int t;
-    for (t=0; t < 5; t++){
+    for (t=0; t < 20; t++){
         histogram[t]=0;
     }
     int center;
@@ -467,7 +617,7 @@ void generateHistograms(vector<Face_Bounding> &faces, Mat &centers, vector<vecto
     }
     int p;
     vector<int> histogramVector;
-    for (p = 0; p < 5; p++){
+    for (p = 0; p < 20; p++){
     cout << histogram[p] << "\n";
     histogramVector.push_back(histogram[p]);
     }
@@ -576,8 +726,6 @@ void Part1 (vector<Face_Bounding> &faces, vector<vector<int>> &histogramsForFace
 
     Mat outputImageSIFT;
     drawKeypoints(image1, keyPointsInBox, outputImageSIFT,Scalar::all(-1), DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-    //imshow("Hello",outputImageSIFT);
-    //waitKey(0);
 
     Mat extractedDescriptors1;
     //stores the SIFT descriptors for the first and second image
@@ -587,7 +735,7 @@ void Part1 (vector<Face_Bounding> &faces, vector<vector<int>> &histogramsForFace
     }
     Mat labels;
 
-    kmeans(descriptors, 5, labels,
+    kmeans(descriptors, 20, labels,
                 TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 10, 1.0),
                    3, KMEANS_PP_CENTERS, centers);
 
@@ -599,7 +747,7 @@ void Part1 (vector<Face_Bounding> &faces, vector<vector<int>> &histogramsForFace
     double norm = 10000;
     int histogram[5];
     int t;
-    for (t=0; t < 5; t++){
+    for (t=0; t < 20; t++){
         histogram[t]=0;
         //cout << histogram[t] << "\n";
     }
@@ -626,7 +774,7 @@ void Part1 (vector<Face_Bounding> &faces, vector<vector<int>> &histogramsForFace
     }
     int p;
     vector<int> histogramVector;
-    for (p = 0; p < 5; p++){
+    for (p = 0; p < 20; p++){
     cout << histogram[p] << "\n";
     histogramVector.push_back(histogram[p]);
 
