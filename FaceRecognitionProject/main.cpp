@@ -9,6 +9,8 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 
+#define KMEANS_K 50
+
 using namespace cv;
 using namespace std;
 // Functions prototypes
@@ -342,7 +344,7 @@ int main()
      imagesTest.push_back(faceTest);
 
     cout << "entering lbp main" << endl;
-    //lbp_main(images, imagesTest);
+    lbp_main(images, imagesTest);
 
 
     //faceTagging();
@@ -398,7 +400,7 @@ int main()
     }
 
     cout <<  "Good" << to_string(good);
-normalizeMatrices(confusionMatrixDamien,confusionMatrixDan, confusionMatrixSteve, confusionMatrixTA);
+    normalizeMatrices(confusionMatrixDamien,confusionMatrixDan, confusionMatrixSteve, confusionMatrixTA);
 
     return 0;
 }
@@ -406,10 +408,10 @@ normalizeMatrices(confusionMatrixDamien,confusionMatrixDan, confusionMatrixSteve
 void normalizeMatrices(Mat confusionMatrixDamien, Mat confusionMatrixDan, Mat confusionMatrixSteve, Mat confusionMatrixTA){
     cout << "Damien\n";
     int g, h;
-Mat confusionMatrixDamienNormalized = Mat::zeros(5, 5, CV_64F);
-Mat confusionMatrixSteveNormalized = Mat::zeros(5, 5, CV_64F);
-Mat confusionMatrixDanNormalized = Mat::zeros(5, 5, CV_64F);
-Mat confusionMatrixTANormalized = Mat::zeros(5, 5, CV_64F);
+    Mat confusionMatrixDamienNormalized = Mat::zeros(5, 5, CV_64F);
+    Mat confusionMatrixSteveNormalized = Mat::zeros(5, 5, CV_64F);
+    Mat confusionMatrixDanNormalized = Mat::zeros(5, 5, CV_64F);
+    Mat confusionMatrixTANormalized = Mat::zeros(5, 5, CV_64F);
     for (g = 0; g < 5; g++){
         double sum = 0;
         for (h = 0; h < 5; h++){
@@ -779,8 +781,13 @@ void Part1 (vector<Face_Bounding> &faces, vector<vector<int>> &histogramsForFace
 void lbp_recognition_results(vector<Face_Bounding> test_faces, vector<Face_Bounding> faces, Mat centres, vector< vector<int> > faces_as_codewords)
 {
     //for each face
+    Mat confusionMatrixSteve = Mat::zeros(5, 5, CV_64F);
+    Mat confusionMatrixDamien = Mat::zeros(5, 5, CV_64F);
+    Mat confusionMatrixTA = Mat::zeros(5, 5, CV_64F);
+    Mat confusionMatrixDan = Mat::zeros(5, 5, CV_64F);
     Mat features;
     int errors = 0;
+    int total = test_faces.size();
     for(int i=0; i<test_faces.size(); i++)
     {
         normalize(test_faces[i].image, test_faces[i].image, 0, 255, CV_MINMAX, CV_32F);
@@ -789,7 +796,7 @@ void lbp_recognition_results(vector<Face_Bounding> test_faces, vector<Face_Bound
 
         //run through and generate a histogram of code words
         vector<int> codewords;
-        for(int j=0; j<50; j++)
+        for(int j=0; j<KMEANS_K; j++)
         {
             codewords.push_back(0);
         }
@@ -808,8 +815,28 @@ void lbp_recognition_results(vector<Face_Bounding> test_faces, vector<Face_Bound
         {
             errors += 1;
         }
+
+        //confusion matrix stuff
+        string nameTest = test_faces[i].name;
+        string poseTest = test_faces[i].pose;
+        string nameResult = faces[matched_face].name;
+        string poseResult = faces[matched_face].pose;
+        Mat matrixToPass;
+        if (nameTest.compare("steve") == 0){
+            matrixToPass = confusionMatrixSteve;
+        } else if (nameTest.compare("damien") == 0){
+            matrixToPass = confusionMatrixDamien;
+        } else if (nameTest.compare("thuy-anh") == 0){
+            matrixToPass = confusionMatrixTA;
+        } else if (nameTest.compare("dan")== 0){
+            matrixToPass = confusionMatrixDan;
+        }
+        insertInConfusionMatrix(poseTest,poseResult, matrixToPass);
+
     }
-    cout << "errors: " << errors << endl;
+    cout << "lbp confusion matrices: " << endl;
+    normalizeMatrices(confusionMatrixDamien, confusionMatrixDan, confusionMatrixSteve, confusionMatrixTA);
+    cout << "errors: " << errors << " out of " << total << endl;
 }
 
 int nearest_face(vector<int> test_hist, vector< vector<int> > trained_hists)
@@ -845,15 +872,15 @@ vector< vector<int> > lbp_main(vector<Face_Bounding> faces, vector<Face_Bounding
     //cluster that ish
     Mat labels, centres;
     descriptors.convertTo(descriptors, CV_32F);
-    kmeans(descriptors, 50, labels,
+    kmeans(descriptors, KMEANS_K, labels,
                 TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 10, 1.0),
                    3, KMEANS_PP_CENTERS, centres);
 
     vector< vector<int> > faces_as_codewords = lbp_cluster(descriptors, faces, centres);
 
-    lbp_recognition_results(test_faces, faces, centres, faces_as_codewords);
+    lbp_recognition_results(faces, faces, centres, faces_as_codewords);
 
-    Mat group_shot = imread("IMG_5374.JPG", CV_LOAD_IMAGE_UNCHANGED);
+    Mat group_shot = imread("IMG_5373.JPG", CV_LOAD_IMAGE_UNCHANGED);
     vector< vector<Point> > tagged_faces = face_detect_main(group_shot);
     face_tagging_results(group_shot, tagged_faces, faces, centres, faces_as_codewords);
 
@@ -880,7 +907,7 @@ void face_tagging_results(Mat group, vector< vector<Point> > tagged_faces, vecto
 
         //run through and generate a histogram of code words
         vector<int> codewords;
-        for(int j=0; j<50; j++)
+        for(int j=0; j<KMEANS_K; j++)
         {
             codewords.push_back(0);
         }
@@ -901,6 +928,8 @@ void face_tagging_results(Mat group, vector< vector<Point> > tagged_faces, vecto
     }
     // resize(output, output, Size(800, 600));
     imshow("tagged", output);
+    waitKey(0);
+    waitKey(0);
     waitKey(0);
 }
 
@@ -927,7 +956,7 @@ vector< vector<int> > lbp_cluster(Mat lbp_features, vector<Face_Bounding> faces,
 
         //run through and generate a histogram of code words
         vector<int> codewords;
-        for(int j=0; j<50; j++)
+        for(int j=0; j<KMEANS_K; j++)
         {
             codewords.push_back(0);
         }
