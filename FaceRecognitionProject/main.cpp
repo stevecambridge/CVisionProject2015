@@ -48,15 +48,15 @@ int main()
 
     /* Load the training images */
     vector<Mat> pictures;
-    const string trainingfilelistDamien = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damien.txt";
-    const string trainingfilelistSteve = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/steve.txt";
-    const string trainingfilelistDan = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/dan.txt";
-    const string trainingfilelistThuyanh = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/thuy-anh.txt";
+    const string trainingfilelistDamien = "damien.txt";
+    const string trainingfilelistSteve = "steve.txt";
+    const string trainingfilelistDan = "dan.txt";
+    const string trainingfilelistThuyanh = "thuy-anh.txt";
     // put the full address of the Training Images folder here
-    const string trainingBaseAddressDamien = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damien";
-    const string trainingBaseAddressDan = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/dan";
-    const string trainingBaseAddressSteve = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/steve";
-    const string trainingBaseAddressThuyanh = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/thuy-anh";
+    const string trainingBaseAddressDamien = "damien";
+    const string trainingBaseAddressDan = "dan";
+    const string trainingBaseAddressSteve = "steve";
+    const string trainingBaseAddressThuyanh = "thuy-anh";
     // Load the training dataset
     YaleDatasetLoader(pictures, trainingBaseAddressDamien, trainingfilelistDamien);
     YaleDatasetLoader(pictures, trainingBaseAddressSteve, trainingfilelistSteve);
@@ -194,22 +194,22 @@ int main()
       images.push_back(face);
 
     // Call Part1 function
-    Mat centers;
-    vector<vector<int>> histogramsForFaces;
-    Part1(images,histogramsForFaces,centers);
+    // Mat centers;
+    // vector<vector<int>> histogramsForFaces;
+    // Part1(images,histogramsForFaces,centers);
 
     /* Load the testing images */
     vector<Mat> picturesTest;
     // put the full address of the Training Images.txt here
-    const string trainingfilelistDamienTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damienTest.txt";
-    const string trainingfilelistSteveTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/steveTest.txt";
-    const string trainingfilelistDanTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/danTest.txt";
-    const string trainingfilelistThuyanhTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/thuy-anhTest.txt";
+    const string trainingfilelistDamienTest = "damienTest.txt";
+    const string trainingfilelistSteveTest = "steveTest.txt";
+    const string trainingfilelistDanTest = "danTest.txt";
+    const string trainingfilelistThuyanhTest = "thuy-anhTest.txt";
     // put the full address of the Training Images folder here
-    const string trainingBaseAddressDamienTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damienTest";
-    const string trainingBaseAddressDanTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/danTest";
-    const string trainingBaseAddressSteveTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/steveTest";
-    const string trainingBaseAddressThuyanhTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/thuy-anhTest";
+    const string trainingBaseAddressDamienTest = "damienTest";
+    const string trainingBaseAddressDanTest = "danTest";
+    const string trainingBaseAddressSteveTest = "steveTest";
+    const string trainingBaseAddressThuyanhTest = "thuy-anhTest";
 
     // Load the training dataset
 
@@ -282,74 +282,33 @@ int main()
 
     //Thuy-Anh
     faceTest = {"thuy-anh", "0", Point2d(119,93),Point2d(461,615),picturesTest[28]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "0", Point2d(149,191),Point2d(480,631),picturesTest[29]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "0", Point2d(117,194),Point2d(480,565),picturesTest[30]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "0", Point2d(115,190),Point2d(455,643),picturesTest[31]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "0", Point2d(120,100),Point2d(475,550),picturesTest[32]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "0", Point2d(142,116),Point2d(454,574),picturesTest[33]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "-45", Point2d(119,132),Point2d(489,577),picturesTest[34]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "-45", Point2d(144,148),Point2d(477,554),picturesTest[35]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "-30", Point2d(96,138),Point2d(457,584),picturesTest[36]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "-30", Point2d(182,124),Point2d(500,527),picturesTest[37]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "30", Point2d(107,114),Point2d(413,548),picturesTest[38]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "30", Point2d(89,139),Point2d(406,548),picturesTest[39]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "45", Point2d(111,120),Point2d(480,600),picturesTest[40]};
-      imagesTest.push_back(faceTest);
-      faceTest = {"thuy-anh", "45", Point2d(66,118),Point2d(437,556),picturesTest[41]};
-      imagesTest.push_back(faceTest);
-
-    //Damien
-    // faceTest = {"damien",Point2d(122,138),Point2d(451,628),picturesTest[42]};
-    // imagesTest.push_back(faceTest);
-    // faceTest = {"damien",Point2d(154,136),Point2d(428,580),picturesTest[43]};
-    // imagesTest.push_back(faceTest);
-    // faceTest = {"damien",Point2d(68,145),Point2d(481,686),picturesTest[44]};
-    // imagesTest.push_back(faceTest);
-    // faceTest = {"damien", Point2d(142,134),Point2d(491,586),picturesTest[45]};
-    // imagesTest.push_back(faceTest);
-    // faceTest = {"damien", Point2d(305,106),Point2d(531,703),picturesTest[46]};
-    // imagesTest.push_back(faceTest);
-    // faceTest = {"damien", Point2d(95,112),Point2d(554,652),picturesTest[47]};
-    // imagesTest.push_back(faceTest);
-    // faceTest = {"damien", Point2d(80,131),Point2d(505,721),picturesTest[48]};
-    // imagesTest.push_back(faceTest);
-    // faceTest = {"damien", Point2d(52,74),Point2d(425,638),picturesTest[49]};
-    // imagesTest.push_back(faceTest);
-    // faceTest = {"damien", Point2d(72,133),Point2d(474,681),picturesTest[50]};
-    // imagesTest.push_back(faceTest);
-    // faceTest = {"damien", Point2d(17,109),Point2d(409,611),picturesTest[51]};
-    // imagesTest.push_back(faceTest);
-    // faceTest = {"damien",Point2d(158,142),Point2d(449,565),picturesTest[52]};
-    // imagesTest.push_back(faceTest);
-    // faceTest = {"damien",Point2d(159,123),Point2d(472,606),picturesTest[53]};
-    // imagesTest.push_back(faceTest);
-    // faceTest = {"damien", Point2d(125,125),Point2d(475,570),picturesTest[54]};
-    // imagesTest.push_back(faceTest);
-    // faceTest = {"damien", Point2d(133,153),Point2d(449,608),picturesTest[55]};
-    // imagesTest.push_back(faceTest);
-
-
-
-    cout << "entering lbp main" << endl;
-    lbp_main(images, imagesTest);
-
-    vector<vector<int>> histogramTestImages;
-    generateHistograms(imagesTest,centers,histogramTestImages);
-
-    // Mat histogramTestImages;
-    // generateHistograms(imagesTest,centers,histogramTestImages);
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "0", Point2d(149,191),Point2d(480,631),picturesTest[29]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "0", Point2d(117,194),Point2d(480,565),picturesTest[30]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "0", Point2d(115,190),Point2d(455,643),picturesTest[31]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "0", Point2d(120,100),Point2d(475,550),picturesTest[32]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "0", Point2d(142,116),Point2d(454,574),picturesTest[33]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "-45", Point2d(119,132),Point2d(489,577),picturesTest[34]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "-45", Point2d(144,148),Point2d(477,554),picturesTest[35]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "-30", Point2d(96,138),Point2d(457,584),picturesTest[36]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "-30", Point2d(182,124),Point2d(500,527),picturesTest[37]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "30", Point2d(107,114),Point2d(413,548),picturesTest[38]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "30", Point2d(89,139),Point2d(406,548),picturesTest[39]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "45", Point2d(111,120),Point2d(480,600),picturesTest[40]};
+    imagesTest.push_back(faceTest);
+    faceTest = {"thuy-anh", "45", Point2d(66,118),Point2d(437,556),picturesTest[41]};
+    imagesTest.push_back(faceTest);
 
     //Damien
      faceTest = {"damien","0",Point2d(122,138),Point2d(451,628),picturesTest[42]};
@@ -381,120 +340,91 @@ int main()
      faceTest = {"damien", "0",Point2d(133,153),Point2d(449,608),picturesTest[55]};
      imagesTest.push_back(faceTest);
 
-    //faceTagging();
-    vector<vector<int>> histogramTestImages;
-    generateHistograms(imagesTest,centers,histogramTestImages);
+    cout << "entering lbp main" << endl;
+    lbp_main(images, imagesTest);
 
-    //cout << "entering lbp main" << endl;
-    //lbp_main(images, imagesTest);
-    //exit(0);
+
+    //faceTagging();
+    // vector<vector<int>> histogramTestImages;
+    // generateHistograms(imagesTest,centers,histogramTestImages);
 
     //0 is -45, 1 is -30, 2 is 0,3 is 30, 4 is 45
     //rows represent training images and columns testing
-    Mat confusionMatrixSteve = Mat::zeros(5, 5, CV_64F);
-    Mat confusionMatrixDamien = Mat::zeros(5, 5, CV_64F);
-    Mat confusionMatrixTA = Mat::zeros(5, 5, CV_64F);
-    Mat confusionMatrixDan = Mat::zeros(5, 5, CV_64F);
-    double newNorm;
-    double norm = 10000;
-    int x;
-    int i;
-    int index = 0;
-    int good = 0;
-    for(x = 0; x < histogramTestImages.size(); x++){
-        for (i = 0; i < histogramsForFaces.size(); i++){
-            //computes the euclidean distance between the two descriptors
-            vector<int> test = histogramTestImages[x];
-            vector<int> train = histogramsForFaces[i];
-            newNorm = cv::norm(test, train, NORM_L2);
-            //Store the best match with that descriptor
-            if (newNorm < norm){
-               norm = newNorm;
-               index = i;
-            }
-        }
-        //Pushes back the center to which the descriptor is matched. The centers
-        //are in the same order as the descriptors
-        string nameTest = imagesTest[x].name;
-        string poseTest = imagesTest[x].pose;
-        string nameResult = images[index].name;
-        string poseResult = images[index].pose;
-        Mat matrixToPass;
-        if (nameTest.compare("steve") == 0){
-            matrixToPass = confusionMatrixSteve;
-        } else if (nameTest.compare("damien") == 0){
-            matrixToPass = confusionMatrixDamien;
-        } else if (nameTest.compare("thuy-anh") == 0){
-            matrixToPass = confusionMatrixTA;
-        } else if (nameTest.compare("dan")== 0){
-            matrixToPass = confusionMatrixDan;
-        }
-        insertInConfusionMatrix(poseTest,poseResult, matrixToPass);
-        if (nameTest.compare(nameResult) == 0){
-            good = good + 1;
-        }
-        norm = 10000;
-        index = 0;
-    }
+   //  Mat confusionMatrixSteve = Mat::zeros(5, 5, CV_64F);
+   //  Mat confusionMatrixDamien = Mat::zeros(5, 5, CV_64F);
+   //  Mat confusionMatrixTA = Mat::zeros(5, 5, CV_64F);
+   //  Mat confusionMatrixDan = Mat::zeros(5, 5, CV_64F);
+   //  double newNorm;
+   //  double norm = 10000;
+   //  int x;
+   //  int i;
+   //  int index = 0;
+   //  int good = 0;
+   //  for(x = 0; x < histogramTestImages.size(); x++){
+   //      for (i = 0; i < histogramsForFaces.size(); i++){
+   //          //computes the euclidean distance between the two descriptors
+   //          vector<int> test = histogramTestImages[x];
+   //          vector<int> train = histogramsForFaces[i];
+   //          newNorm = cv::norm(test, train, NORM_L2);
+   //          //Store the best match with that descriptor
+   //          if (newNorm < norm){
+   //             norm = newNorm;
+   //             index = i;
+   //          }
+   //      }
+   //      //Pushes back the center to which the descriptor is matched. The centers
+   //      //are in the same order as the descriptors
+   //      string nameTest = imagesTest[x].name;
+   //      string poseTest = imagesTest[x].pose;
+   //      string nameResult = images[index].name;
+   //      string poseResult = images[index].pose;
+   //      Mat matrixToPass;
+   //      if (nameTest.compare("steve") == 0){
+   //          matrixToPass = confusionMatrixSteve;
+   //      } else if (nameTest.compare("damien") == 0){
+   //          matrixToPass = confusionMatrixDamien;
+   //      } else if (nameTest.compare("thuy-anh") == 0){
+   //          matrixToPass = confusionMatrixTA;
+   //      } else if (nameTest.compare("dan")== 0){
+   //          matrixToPass = confusionMatrixDan;
+   //      }
+   //      insertInConfusionMatrix(poseTest,poseResult, matrixToPass);
+   //      if (nameTest.compare(nameResult) == 0){
+   //          good = good + 1;
+   //      }
+   //      norm = 10000;
+   //      index = 0;
+   //  }
 
-    double newNorm;
-    double norm = 10000;
-    int x;
-    int i;
-    int index = 0;
-    int good = 0;
-    for(x = 0; x < histogramTestImages.size(); x++){
-        for (i = 0; i < histogramsForFaces.size(); i++){
-            //computes the euclidean distance between the two descriptors
-            vector<int> test = histogramTestImages[x];
-            vector<int> train = histogramsForFaces[i];
-            newNorm = cv::norm(test, train, NORM_L2);
-            //Store the best match with that descriptor
-            if (newNorm < norm){
-               norm = newNorm;
-               index = i;
-            }
-        }
-        //Pushes back the center to which the descriptor is matched. The centers
-        //are in the same order as the descriptors
-        string nameTest = imagesTest[x].name;
-        string nameResult = images[index].name;
-        if (nameTest.compare(nameResult) == 0){
-            good = good + 1;
-        }
-        norm = 10000;
-        index = 0;
-    }
+   //  cout <<  "Good" << to_string(good);
 
-    cout <<  "Good" << to_string(good);
-
-    cout << "Damien\n";
-    Mat confusionNormalized;
-    //normalize(confusionMatrixDamien,confusionNormalized,0,1,CV_MINMAX,CV_64F);
-    int g, h;
-    for (g = 0; g < 5; g++){
-        for (h = 0; h < 5; h++){
-            cout << confusionMatrixDamien.at<int>(g,h) << "\n";
-        }
-    }
-    cout << "Steve" << "\n";
-   for (g = 0; g < 5; g++){
-        for (h = 0; h < 5; h++){
-            cout << confusionMatrixSteve.at<int>(g,h) << "\n";
-        }
-    }
-    cout << "Dan" << "\n";
-    for (g = 0; g < 5; g++){
-        for (h = 0; h < 5; h++){
-            cout << confusionMatrixDan.at<int>(g,h) << "\n";
-        }
-    }
-    cout << "TA" << "\n";
-    for (g = 0; g < 5; g++){
-        for (h = 0; h < 5; h++){
-            cout << confusionMatrixTA.at<int>(g,h) << "\n";
-        }
-    }
+   //  cout << "Damien\n";
+   //  Mat confusionNormalized;
+   //  //normalize(confusionMatrixDamien,confusionNormalized,0,1,CV_MINMAX,CV_64F);
+   //  int g, h;
+   //  for (g = 0; g < 5; g++){
+   //      for (h = 0; h < 5; h++){
+   //          cout << confusionMatrixDamien.at<int>(g,h) << "\n";
+   //      }
+   //  }
+   //  cout << "Steve" << "\n";
+   // for (g = 0; g < 5; g++){
+   //      for (h = 0; h < 5; h++){
+   //          cout << confusionMatrixSteve.at<int>(g,h) << "\n";
+   //      }
+   //  }
+   //  cout << "Dan" << "\n";
+   //  for (g = 0; g < 5; g++){
+   //      for (h = 0; h < 5; h++){
+   //          cout << confusionMatrixDan.at<int>(g,h) << "\n";
+   //      }
+   //  }
+   //  cout << "TA" << "\n";
+   //  for (g = 0; g < 5; g++){
+   //      for (h = 0; h < 5; h++){
+   //          cout << confusionMatrixTA.at<int>(g,h) << "\n";
+   //      }
+   //  }
 
     return 0;
 }
@@ -867,7 +797,7 @@ vector< vector<int> > lbp_main(vector<Face_Bounding> faces, vector<Face_Bounding
 
     lbp_recognition_results(test_faces, faces, centres, faces_as_codewords);
 
-    Mat group_shot = imread("group.JPG", CV_LOAD_IMAGE_UNCHANGED);
+    Mat group_shot = imread("IMG_5374.JPG", CV_LOAD_IMAGE_UNCHANGED);
     vector< vector<Point> > tagged_faces = face_detect_main(group_shot);
     face_tagging_results(group_shot, tagged_faces, faces, centres, faces_as_codewords);
 
@@ -878,8 +808,8 @@ void face_tagging_results(Mat group, vector< vector<Point> > tagged_faces, vecto
 {
     Mat tagged_face;
     Mat features;
-    Mat output = imread("group.JPG");
-    // group.copyTo(output);
+    Mat output;
+    group.copyTo(output);
     //for each face
     for(int i=0; i<tagged_faces.size(); i++)
     {
@@ -907,12 +837,14 @@ void face_tagging_results(Mat group, vector< vector<Point> > tagged_faces, vecto
 
         //id and then name of matched face 
         int matched_face = nearest_face(codewords, faces_as_codewords);
+        cout << "match: " << matched_face << endl;
         string name = faces[matched_face].name;
 
         //write the name on the picture
-        putText(output, name, tagged_faces[i][0], FONT_HERSHEY_PLAIN, 12, Scalar(0,255,255));
+        putText(output, name, tagged_faces[i][0], FONT_HERSHEY_PLAIN, 2, Scalar(255,0,255));
     }
-    cout << output << endl;
+    // resize(output, output, Size(800, 600));
+    imshow("tagged", output);
     waitKey(0);
 }
 
