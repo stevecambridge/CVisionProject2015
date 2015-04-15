@@ -54,16 +54,16 @@ int main()
     /* Load the training images */
     //Please note that a folder called thuy-anh has to be put in the home folder and the CVisionProject has to be in that folder
     vector<Mat> pictures;
-    const string trainingfilelistDamien = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damien.txt";
-    const string trainingfilelistSteve = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/steve.txt";
-    const string trainingfilelistDan = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/dan.txt";
-    const string trainingfilelistThuyanh = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/thuy-anh.txt";
+    const string trainingfilelistDamien = "damien.txt";
+    const string trainingfilelistSteve = "steve.txt";
+    const string trainingfilelistDan = "dan.txt";
+    const string trainingfilelistThuyanh = "thuy-anh.txt";
 
     // put the full address of the Training Images folder here
-    const string trainingBaseAddressDamien = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damien";
-    const string trainingBaseAddressDan = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/dan";
-    const string trainingBaseAddressSteve = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/steve";
-    const string trainingBaseAddressThuyanh = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/thuy-anh";
+    const string trainingBaseAddressDamien = "damien";
+    const string trainingBaseAddressDan = "dan";
+    const string trainingBaseAddressSteve = "steve";
+    const string trainingBaseAddressThuyanh = "thuy-anh";
 
     // Load the training dataset
     YaleDatasetLoader(pictures, trainingBaseAddressDamien, trainingfilelistDamien);
@@ -211,16 +211,16 @@ int main()
     vector<Mat> picturesTest;
 
     // put the full address of the Training Images.txt here
-    const string trainingfilelistDamienTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damienTest.txt";
-    const string trainingfilelistSteveTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/steveTest.txt";
-    const string trainingfilelistDanTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/danTest.txt";
-    const string trainingfilelistThuyanhTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/thuy-anhTest.txt";
+    const string trainingfilelistDamienTest = "damienTest.txt";
+    const string trainingfilelistSteveTest = "steveTest.txt";
+    const string trainingfilelistDanTest = "danTest.txt";
+    const string trainingfilelistThuyanhTest = "thuy-anhTest.txt";
 
     // put the full address of the Training Images folder here
-    const string trainingBaseAddressDamienTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/damienTest";
-    const string trainingBaseAddressDanTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/danTest";
-    const string trainingBaseAddressSteveTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/steveTest";
-    const string trainingBaseAddressThuyanhTest = "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/thuy-anhTest";
+    const string trainingBaseAddressDamienTest = "damienTest";
+    const string trainingBaseAddressDanTest = "danTest";
+    const string trainingBaseAddressSteveTest = "steveTest";
+    const string trainingBaseAddressThuyanhTest = "thuy-anhTest";
 
     // Load the training dataset
     YaleDatasetLoader(picturesTest, trainingBaseAddressSteveTest, trainingfilelistSteveTest);
@@ -515,7 +515,7 @@ void normalizeMatrices(Mat confusionMatrixDamien, Mat confusionMatrixDan, Mat co
 
 void faceTagging(){
     const int NUM_IMAGES_PART1 = 5;
-    const string IMG_NAMES_PART1[] = {"/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/IMG_5373.JPG", "/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/IMG_5374.JPG","/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/IMG_5375.JPG","/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/IMG_5376.JPG","/home/thuy-anh/CVisionProject2015/FaceRecognitionProject/IMG_5377.JPG"};
+    const string IMG_NAMES_PART1[] = {"IMG_5373.JPG", "IMG_5374.JPG","IMG_5375.JPG","IMG_5376.JPG","IMG_5377.JPG"};
 
     // Load Part1 images
     vector<Mat> Images_part1;
