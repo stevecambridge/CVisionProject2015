@@ -350,7 +350,6 @@ int main()
     faceTest = {"damien", "0",Point2d(133,153),Point2d(449,608),picturesTest[55]};
     imagesTest.push_back(faceTest);
 
-    cout << "entering lbp main" << endl;
     lbp_main(images, imagesTest);
 
     //faceTagging();
@@ -599,7 +598,7 @@ void generateHistograms(vector<Face_Bounding> &faces, Mat &centers, vector<vecto
 
         double newNorm;
         double norm = 10000;
-        int histogram[10];
+        int histogram[20];
         int t;
 
         for (t=0; t < 20; t++){
@@ -745,7 +744,6 @@ void Part1 (vector<Face_Bounding> &faces, vector<vector<int>> &histogramsForFace
     }
 
     Mat labels;
-
     kmeans(descriptors, 20, labels,
                 TermCriteria( TermCriteria::EPS+TermCriteria::COUNT, 10, 1.0),
                    3, KMEANS_PP_CENTERS, centers);
@@ -757,7 +755,7 @@ void Part1 (vector<Face_Bounding> &faces, vector<vector<int>> &histogramsForFace
         //the closest center
         double newNorm;
         double norm = 10000;
-        int histogram[5];
+        int histogram[20];
         int t;
 
         for (t=0; t < 20; t++){
@@ -964,8 +962,6 @@ void face_tagging_results(Mat group, vector< vector<Point> > tagged_faces, vecto
     }
 
     imshow("tagged", output);
-    waitKey(0);
-    waitKey(0);
     waitKey(0);
 }
 
